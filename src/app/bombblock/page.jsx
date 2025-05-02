@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function Page() {
+  // 🔹 상태 관리 및 참조 초기화
   const canvasRef = useRef(null);
   const gridSize = 8;
   const cellSize = useRef(60);
@@ -17,6 +18,7 @@ export default function Page() {
   const [bombDamage] = useState(1);
   const particles = useRef([]);
 
+  // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -30,6 +32,7 @@ export default function Page() {
     canvas.height = cellSize.current * gridSize;
   };
 
+  // 🔹 그리드 초기화 (폭탄, 장애물, 폭발 상태 포함)
   const createGrid = () => {
     const newGrid = [];
     for (let y = 0; y < gridSize; y++) {
@@ -40,7 +43,7 @@ export default function Page() {
           obstacle: null,
           explodeTimer: 0,
           flashPhase: 0,
-          explosionDirection: null, // "center" | "up" | "down" | "left" | "right"
+          explosionDirection: null, // 십자형 폭발 방향 정보
         });
       }
       newGrid.push(row);
@@ -48,6 +51,7 @@ export default function Page() {
     grid.current = newGrid;
   };
 
+  // 🔹 장애물 무작위 배치
   const placeRandomObstacles = (count = 1) => {
     let attempts = 0;
     while (count > 0 && attempts < 100) {
@@ -65,6 +69,7 @@ export default function Page() {
     }
   };
 
+  // 🔹 폭탄 설치
   const placeBomb = (x, y) => {
     const cell = grid.current[y][x];
     if (!cell.bomb && !cell.obstacle) {
@@ -74,11 +79,13 @@ export default function Page() {
     }
   };
 
+  // 🔹 폭발 효과 초기 설정
   const startExplosionEffect = (cell) => {
     cell.explodeTimer = 15;
     cell.flashPhase = 0;
   };
 
+  // 🔹 파티클 폭발 효과 생성 (시각 효과용)
   const createExplosionParticles = (x, y) => {
     const count = 12;
     const cx = x * cellSize.current + cellSize.current / 2;
@@ -100,6 +107,7 @@ export default function Page() {
     }
   };
 
+  // 🔹 폭탄 폭발 처리 + 연쇄 처리
   const explodeBomb = (bomb) => {
     const { x, y, power, damage } = bomb;
     const cell = grid.current[y][x];
@@ -115,6 +123,8 @@ export default function Page() {
       [0, 1, "down"],
       [0, -1, "up"],
     ];
+
+    // 🔹 방향별 화염 전파
     dirs.forEach(([dx, dy, dir]) => {
       for (let i = 1; i <= power; i++) {
         const nx = x + dx * i;
@@ -142,6 +152,7 @@ export default function Page() {
     return additionalBombs;
   };
 
+  // 🔹 턴 업데이트: 폭탄 처리 + 폭발 + 장애물 추가
   const updateTurn = () => {
     setTurn((prev) => prev + 1);
     bombQueue.current.forEach((b) => b.countdown--);
@@ -173,6 +184,7 @@ export default function Page() {
     saveBestScore();
   };
 
+  // 🔹 마우스 클릭 → 폭탄 설치
   const handleCanvasClick = (e) => {
     if (gameOver.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
@@ -185,6 +197,7 @@ export default function Page() {
     updateTurn();
   };
 
+  // 🔹 메인 캔버스 렌더링 루프
   const drawGrid = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -203,7 +216,7 @@ export default function Page() {
         ctx.strokeStyle = "black";
         ctx.strokeRect(cx, cy, cellSize.current, cellSize.current);
 
-        // 폭발 이펙트
+        // 🔹 폭발 이펙트 (셀 전체 불꽃)
         if (cell.explodeTimer > 0 && cell.explosionDirection) {
           const fireColors = ["#ffcc00", "#ff6600", "#ff3300"];
           ctx.fillStyle = fireColors[cell.flashPhase % fireColors.length];
@@ -218,7 +231,7 @@ export default function Page() {
           }
         }
 
-        // 장애물
+        // 🔹 장애물 렌더링
         if (cell.obstacle) {
           const lightness = Math.max(20, 60 - cell.obstacle * 8);
           ctx.fillStyle = `hsl(0, 0%, ${lightness}%)`;
@@ -231,14 +244,13 @@ export default function Page() {
           );
         }
 
-        // 폭탄
+        // 🔹 폭탄 렌더링
         if (cell.bomb && cell.bomb.countdown > 0) {
-          // 둥근 검은 폭탄
           const cxCenter = cx + cellSize.current / 2;
           const cyCenter = cy + cellSize.current / 2;
           const radius = cellSize.current * 0.35;
 
-          // 폭탄 몸통
+          // 본체
           ctx.beginPath();
           ctx.arc(cxCenter, cyCenter, radius, 0, Math.PI * 2);
           const grad = ctx.createRadialGradient(
@@ -262,15 +274,14 @@ export default function Page() {
           ctx.lineTo(cxCenter - 5, cyCenter - radius - 10);
           ctx.stroke();
 
-          // 카운트 심지 위 불꽃
-          const fireSize = (4 - cell.bomb.countdown) * 2 + 3; // countdown: 3→3px, 2→5px, 1→7px
+          // 심지 위 불꽃 (카운트다운 비주얼화)
+          const fireSize = (4 - cell.bomb.countdown) * 2 + 3;
           const fireColor = cell.bomb.countdown === 1 ? "red" : "orange";
-
           ctx.fillStyle = fireColor;
           ctx.beginPath();
           ctx.ellipse(
             cxCenter - 5,
-            cyCenter - radius - 12, // 심지 위
+            cyCenter - radius - 12,
             fireSize,
             fireSize * 0.8,
             0,
@@ -278,6 +289,9 @@ export default function Page() {
             Math.PI * 2
           );
           ctx.fill();
+
+          // 데미지 숫자
+          ctx.fillStyle = "white";
           ctx.font = `${cellSize.current * 0.4}px sans-serif`;
           ctx.fillText(bombDamage, cxCenter, cyCenter);
         }
@@ -287,6 +301,7 @@ export default function Page() {
     requestAnimationFrame(drawGrid);
   };
 
+  // 🔹 게임 종료 판정
   const checkGameOver = () => {
     const hasEmpty = grid.current.flat().some((c) => !c.bomb && !c.obstacle);
     if (!hasEmpty) {
@@ -295,6 +310,7 @@ export default function Page() {
     }
   };
 
+  // 🔹 최고 점수 로딩/저장
   const loadBestScore = () => {
     const saved = localStorage.getItem("bombBlockBestScore");
     if (saved) setBestScore(parseInt(saved));
@@ -307,6 +323,7 @@ export default function Page() {
     }
   };
 
+  // 🔹 초기 렌더링 시 게임 세팅
   useEffect(() => {
     resizeCanvas();
     createGrid();
@@ -317,6 +334,7 @@ export default function Page() {
     return () => window.removeEventListener("resize", resizeCanvas);
   }, []);
 
+  // 🔹 UI 및 캔버스 출력
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 p-4">
       <h1 className="text-2xl text-yellow-400 font-bold mb-4">
