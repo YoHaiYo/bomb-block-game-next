@@ -40,6 +40,7 @@ export default function Page() {
           obstacle: null,
           explodeTimer: 0,
           flashPhase: 0,
+          explosionDirection: null, // "center" | "up" | "down" | "left" | "right"
         });
       }
       newGrid.push(row);
@@ -103,24 +104,25 @@ export default function Page() {
     const { x, y, power, damage } = bomb;
     const cell = grid.current[y][x];
     cell.bomb = null;
+    cell.explosionDirection = "center";
     startExplosionEffect(cell);
     createExplosionParticles(x, y);
 
     const additionalBombs = [];
     const dirs = [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
+      [1, 0, "right"],
+      [-1, 0, "left"],
+      [0, 1, "down"],
+      [0, -1, "up"],
     ];
-
-    dirs.forEach(([dx, dy]) => {
+    dirs.forEach(([dx, dy, dir]) => {
       for (let i = 1; i <= power; i++) {
         const nx = x + dx * i;
         const ny = y + dy * i;
         if (nx < 0 || ny < 0 || nx >= gridSize || ny >= gridSize) break;
 
         const neighbor = grid.current[ny][nx];
+        neighbor.explosionDirection = dir;
         startExplosionEffect(neighbor);
 
         if (neighbor.obstacle) {
@@ -202,42 +204,17 @@ export default function Page() {
         ctx.strokeRect(cx, cy, cellSize.current, cellSize.current);
 
         // 폭발 이펙트
-        if (cell.explodeTimer > 0) {
-          const centerX = cx + cellSize.current / 2;
-          const centerY = cy + cellSize.current / 2;
-          const baseSize = cellSize.current * 0.5;
-
-          // 내부 붉은 폭발
-          ctx.fillStyle = "red";
-          ctx.beginPath();
-          ctx.ellipse(
-            centerX,
-            centerY,
-            baseSize * 0.9,
-            baseSize * 0.7,
-            0,
-            0,
-            Math.PI * 2
-          );
-          ctx.fill();
-
-          // 외곽 노란 폭발
-          ctx.fillStyle = "yellow";
-          ctx.beginPath();
-          ctx.ellipse(
-            centerX,
-            centerY,
-            baseSize * 1.2,
-            baseSize * 1.0,
-            0,
-            0,
-            Math.PI * 2
-          );
-          ctx.fill();
+        if (cell.explodeTimer > 0 && cell.explosionDirection) {
+          const fireColors = ["#ffcc00", "#ff6600", "#ff3300"];
+          ctx.fillStyle = fireColors[cell.flashPhase % fireColors.length];
+          ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
 
           cell.explodeTimer--;
           if (cell.explodeTimer % 5 === 0) {
             cell.flashPhase++;
+          }
+          if (cell.explodeTimer <= 0) {
+            cell.explosionDirection = null;
           }
         }
 
