@@ -235,6 +235,8 @@ export default function Page() {
           const lightness = Math.max(20, 60 - cell.obstacle * 8);
           ctx.fillStyle = `hsl(0, 0%, ${lightness}%)`;
           ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
+          // ✅ 폰트는 매번 명시적으로 재지정
+          ctx.font = `${cellSize.current * 0.5}px sans-serif`;
           ctx.fillStyle = "white";
           ctx.fillText(
             cell.obstacle,
