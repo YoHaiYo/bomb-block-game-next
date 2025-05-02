@@ -15,9 +15,10 @@ export default function Page() {
   const [turn, setTurn] = useState(0);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
-  const [bombPower] = useState(1);
-  const [bombDamage] = useState(1);
+  const [bombPower, setBombPower] = useState(1);
+  const [bombDamage, setBombDamage] = useState(1);
   const particles = useRef([]);
+  const [showUpgrade, setShowUpgrade] = useState(false);
 
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
@@ -181,9 +182,23 @@ export default function Page() {
     if ((turn + 1) % 3 === 0) {
       placeRandomObstacles(Math.floor((turn + 1) / 3));
     }
+    if ((turn + 1) % 25 === 0) {
+      setShowUpgrade(true);
+      return; // 업그레이드 선택까지 다음 로직 정지
+    }
 
     checkGameOver();
     saveBestScore();
+  };
+
+  // 카드 선택 처리 핸들러
+  const handleUpgrade = (type) => {
+    if (type === "range") {
+      setBombPower((prev) => prev + 1);
+    } else if (type === "damage") {
+      setBombDamage((prev) => prev + 1);
+    }
+    setShowUpgrade(false);
   };
 
   // 🔹 마우스 클릭 → 폭탄 설치
@@ -312,6 +327,29 @@ export default function Page() {
         className="bg-gray-800"
         onClick={handleCanvasClick}
       />
+      {showUpgrade && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 text-center space-y-4">
+            <h2 className="text-xl font-bold text-gray-800">
+              업그레이드 선택!
+            </h2>
+            <div className="flex gap-6 justify-center">
+              <button
+                className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-black font-semibold shadow"
+                onClick={() => handleUpgrade("range")}
+              >
+                🔥 Bomb Range +1
+              </button>
+              <button
+                className="bg-red-400 hover:bg-red-500 px-4 py-2 rounded-lg text-white font-semibold shadow"
+                onClick={() => handleUpgrade("damage")}
+              >
+                💥 Bomb Damage +1
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
