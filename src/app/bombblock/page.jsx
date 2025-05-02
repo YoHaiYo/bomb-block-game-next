@@ -15,6 +15,7 @@ export default function Page() {
   const [bestScore, setBestScore] = useState(0);
   const [bombPower] = useState(1);
   const [bombDamage] = useState(1);
+  const particles = useRef([]);
 
   const resizeCanvas = () => {
     const canvas = canvasRef.current;
@@ -77,11 +78,33 @@ export default function Page() {
     cell.flashPhase = 0;
   };
 
+  const createExplosionParticles = (x, y) => {
+    const count = 12;
+    const cx = x * cellSize.current + cellSize.current / 2;
+    const cy = y * cellSize.current + cellSize.current / 2;
+
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 2 + 1;
+      const size = Math.random() * 3 + 2;
+      particles.current.push({
+        x: cx,
+        y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size,
+        color: Math.random() < 0.5 ? "orange" : "yellow",
+        life: 20,
+      });
+    }
+  };
+
   const explodeBomb = (bomb) => {
     const { x, y, power, damage } = bomb;
     const cell = grid.current[y][x];
     cell.bomb = null;
     startExplosionEffect(cell);
+    createExplosionParticles(x, y);
 
     const additionalBombs = [];
     const dirs = [
@@ -180,9 +203,38 @@ export default function Page() {
 
         // 폭발 이펙트
         if (cell.explodeTimer > 0) {
-          const color = cell.flashPhase % 2 === 0 ? "yellow" : "orange";
-          ctx.fillStyle = color;
-          ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
+          const centerX = cx + cellSize.current / 2;
+          const centerY = cy + cellSize.current / 2;
+          const baseSize = cellSize.current * 0.5;
+
+          // 내부 붉은 폭발
+          ctx.fillStyle = "red";
+          ctx.beginPath();
+          ctx.ellipse(
+            centerX,
+            centerY,
+            baseSize * 0.9,
+            baseSize * 0.7,
+            0,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+
+          // 외곽 노란 폭발
+          ctx.fillStyle = "yellow";
+          ctx.beginPath();
+          ctx.ellipse(
+            centerX,
+            centerY,
+            baseSize * 1.2,
+            baseSize * 1.0,
+            0,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+
           cell.explodeTimer--;
           if (cell.explodeTimer % 5 === 0) {
             cell.flashPhase++;
@@ -204,14 +256,53 @@ export default function Page() {
 
         // 폭탄
         if (cell.bomb && cell.bomb.countdown > 0) {
-          ctx.fillStyle = "red";
-          ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
-          ctx.fillStyle = "white";
-          ctx.fillText(
-            cell.bomb.countdown,
-            cx + cellSize.current / 2,
-            cy + cellSize.current / 2
+          // 둥근 검은 폭탄
+          const cxCenter = cx + cellSize.current / 2;
+          const cyCenter = cy + cellSize.current / 2;
+          const radius = cellSize.current * 0.35;
+
+          // 폭탄 몸통
+          ctx.beginPath();
+          ctx.arc(cxCenter, cyCenter, radius, 0, Math.PI * 2);
+          const grad = ctx.createRadialGradient(
+            cxCenter - 5,
+            cyCenter - 5,
+            radius * 0.2,
+            cxCenter,
+            cyCenter,
+            radius
           );
+          grad.addColorStop(0, "#444");
+          grad.addColorStop(1, "#000");
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          // 심지
+          ctx.strokeStyle = "#cfa77b";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(cxCenter, cyCenter - radius);
+          ctx.lineTo(cxCenter - 5, cyCenter - radius - 10);
+          ctx.stroke();
+
+          // 카운트 심지 위 불꽃
+          const fireSize = (4 - cell.bomb.countdown) * 2 + 3; // countdown: 3→3px, 2→5px, 1→7px
+          const fireColor = cell.bomb.countdown === 1 ? "red" : "orange";
+
+          ctx.fillStyle = fireColor;
+          ctx.beginPath();
+          ctx.ellipse(
+            cxCenter - 5,
+            cyCenter - radius - 12, // 심지 위
+            fireSize,
+            fireSize * 0.8,
+            0,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+          ctx.font = `${cellSize.current * 0.4}px sans-serif`;
+          ctx.fillText(bombDamage, cxCenter, cyCenter);
         }
       }
     }
