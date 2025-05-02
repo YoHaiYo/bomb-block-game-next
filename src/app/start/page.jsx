@@ -19,8 +19,12 @@ export default function Page() {
   const resizeCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const minDim = Math.min(window.innerWidth, window.innerHeight) * 0.9;
-    cellSize.current = Math.floor(minDim / gridSize);
+
+    const padding = 32;
+    const availableWidth = window.innerWidth - padding * 2;
+    const availableHeight = window.innerHeight - padding * 2 - 120;
+    const size = Math.floor(Math.min(availableWidth, availableHeight));
+    cellSize.current = Math.floor(size / gridSize);
     canvas.width = cellSize.current * gridSize;
     canvas.height = cellSize.current * gridSize;
   };
@@ -30,7 +34,12 @@ export default function Page() {
     for (let y = 0; y < gridSize; y++) {
       const row = [];
       for (let x = 0; x < gridSize; x++) {
-        row.push({ bomb: null, obstacle: null });
+        row.push({
+          bomb: null,
+          obstacle: null,
+          explodeTimer: 0,
+          flashPhase: 0,
+        });
       }
       newGrid.push(row);
     }
@@ -63,13 +72,24 @@ export default function Page() {
     }
   };
 
+  const startExplosionEffect = (cell) => {
+    cell.explodeTimer = 15;
+    cell.flashPhase = 0;
+  };
+
   const explodeBomb = (bomb) => {
     const { x, y, power, damage } = bomb;
     const cell = grid.current[y][x];
     cell.bomb = null;
+    startExplosionEffect(cell);
 
     const additionalBombs = [];
-    const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+    const dirs = [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ];
 
     dirs.forEach(([dx, dy]) => {
       for (let i = 1; i <= power; i++) {
@@ -78,12 +98,15 @@ export default function Page() {
         if (nx < 0 || ny < 0 || nx >= gridSize || ny >= gridSize) break;
 
         const neighbor = grid.current[ny][nx];
+        startExplosionEffect(neighbor);
+
         if (neighbor.obstacle) {
           neighbor.obstacle -= damage;
           setScore((s) => s + (neighbor.obstacle <= 0 ? 2 : 1));
           if (neighbor.obstacle <= 0) neighbor.obstacle = null;
           break;
         }
+
         if (neighbor.bomb && neighbor.bomb.countdown > 0) {
           neighbor.bomb.countdown = 0;
           additionalBombs.push(neighbor.bomb);
@@ -155,19 +178,40 @@ export default function Page() {
         ctx.strokeStyle = "black";
         ctx.strokeRect(cx, cy, cellSize.current, cellSize.current);
 
-        if (cell.obstacle) {
-          const gray = Math.min(100 + cell.obstacle * 30, 255);
-          ctx.fillStyle = `rgb(${gray},${gray},${gray})`;
+        // 폭발 이펙트
+        if (cell.explodeTimer > 0) {
+          const color = cell.flashPhase % 2 === 0 ? "yellow" : "orange";
+          ctx.fillStyle = color;
           ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
-          ctx.fillStyle = "white";
-          ctx.fillText(cell.obstacle, cx + cellSize.current / 2, cy + cellSize.current / 2);
+          cell.explodeTimer--;
+          if (cell.explodeTimer % 5 === 0) {
+            cell.flashPhase++;
+          }
         }
 
+        // 장애물
+        if (cell.obstacle) {
+          const lightness = Math.max(20, 60 - cell.obstacle * 8);
+          ctx.fillStyle = `hsl(0, 0%, ${lightness}%)`;
+          ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
+          ctx.fillStyle = "white";
+          ctx.fillText(
+            cell.obstacle,
+            cx + cellSize.current / 2,
+            cy + cellSize.current / 2
+          );
+        }
+
+        // 폭탄
         if (cell.bomb && cell.bomb.countdown > 0) {
           ctx.fillStyle = "red";
           ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
           ctx.fillStyle = "white";
-          ctx.fillText(cell.bomb.countdown, cx + cellSize.current / 2, cy + cellSize.current / 2);
+          ctx.fillText(
+            cell.bomb.countdown,
+            cx + cellSize.current / 2,
+            cy + cellSize.current / 2
+          );
         }
       }
     }
@@ -207,14 +251,25 @@ export default function Page() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 p-4">
-      <h1 className="text-2xl text-yellow-400 font-bold mb-4">Bomb Block Game (Canvas)</h1>
-      <div className="text-white text-center mb-4 space-y-1">
-        <div>Turn: {turn}</div>
-        <div>Score: {score}</div>
-        <div>Best Score: {bestScore}</div>
-        <div>Range: {bombPower} / Damage: {bombDamage}</div>
+      <h1 className="text-2xl text-yellow-400 font-bold mb-4">
+        Bomb Block Game (Canvas)
+      </h1>
+      <div className="text-white text-center mb-4 text-base space-y-1">
+        <div className="flex gap-6 justify-center">
+          <span>Turn: {turn}</span>
+          <span>Score: {score}</span>
+          <span>Best: {bestScore}</span>
+        </div>
+        <div className="flex gap-6 justify-center">
+          <span>Range: {bombPower}</span>
+          <span>Damage: {bombDamage}</span>
+        </div>
       </div>
-      <canvas ref={canvasRef} className="bg-gray-800" onClick={handleCanvasClick} />
+      <canvas
+        ref={canvasRef}
+        className="bg-gray-800"
+        onClick={handleCanvasClick}
+      />
     </div>
   );
 }
