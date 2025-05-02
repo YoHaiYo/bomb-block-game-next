@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { drawExplosionEffect, drawBomb } from "./graphics";
+import { drawExplosionEffect, drawBomb, drawParticles } from "./graphics";
 
 export default function Page() {
   // 🔹 상태 관리 및 참조 초기화
@@ -82,6 +82,7 @@ export default function Page() {
 
   // 🔹 폭발 효과 초기 설정
   const startExplosionEffect = (cell) => {
+    if (!cell) return;
     cell.explodeTimer = 15;
     cell.flashPhase = 0;
   };
@@ -219,7 +220,14 @@ export default function Page() {
 
         // 🔹 폭발 이펙트 (셀 전체 불꽃)
         if (cell.explodeTimer > 0 && cell.explosionDirection) {
-          drawExplosionEffect(ctx, cell, cx, cy, cellSize.current);
+          drawExplosionEffect(
+            ctx,
+            cell,
+            cx,
+            cy,
+            cellSize.current,
+            particles.current
+          );
         }
 
         // 🔹 장애물 렌더링
@@ -242,6 +250,8 @@ export default function Page() {
       }
     }
 
+    // 그리드 다 돌고 난 뒤 파티클 여기에서 한 번만 호출해야 함
+    drawParticles(ctx, particles.current);
     requestAnimationFrame(drawGrid);
   };
 

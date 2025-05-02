@@ -1,14 +1,61 @@
-export function drawExplosionEffect(ctx, cell, cx, cy, size) {
-  const fireColors = ["#ffcc00", "#ff6600", "#ff3300"];
-  ctx.fillStyle = fireColors[cell.flashPhase % fireColors.length];
-  ctx.fillRect(cx, cy, size, size);
+export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {
+  if (cell.explodeTimer > 0) {
+    // 🔸 셀 기본 폭발 배경
+    const phase = cell.flashPhase;
+    const color = phase % 2 === 0 ? "yellow" : "orange";
+    ctx.fillStyle = color;
+    ctx.fillRect(cx, cy, cellSize, cellSize);
 
-  cell.explodeTimer--;
-  if (cell.explodeTimer % 5 === 0) {
-    cell.flashPhase++;
+    // 🔸 파티클 최초 생성 (한 번만)
+    if (cell.explodeTimer === 15) {
+      const count = 12;
+      const centerX = cx + cellSize / 2;
+      const centerY = cy + cellSize / 2;
+
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 2 + 1;
+        const size = Math.random() * 3 + 2;
+
+        particles.push({
+          x: centerX,
+          y: centerY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size,
+          color: Math.random() < 0.5 ? "orange" : "yellow",
+          life: 20,
+        });
+      }
+    }
+
+    // 🔸 타이머 및 애니메이션 업데이트
+    cell.explodeTimer--;
+    if (cell.explodeTimer % 5 === 0) {
+      cell.flashPhase++;
+    }
+    if (cell.explodeTimer <= 0) {
+      cell.explosionDirection = null;
+    }
   }
-  if (cell.explodeTimer <= 0) {
-    cell.explosionDirection = null;
+}
+export function drawParticles(ctx, particles) {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 1;
+
+    ctx.globalAlpha = p.life / 20;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    if (p.life <= 0) {
+      particles.splice(i, 1);
+    }
   }
 }
 
