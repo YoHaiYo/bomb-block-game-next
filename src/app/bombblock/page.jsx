@@ -80,13 +80,10 @@ export default function Page() {
       attempts++;
     }
   };
-  function getObstacleStrength(turn) {
-    if (turn < 10) return 1;
-    if (turn < 20) return 2;
-    if (turn < 30) return 3;
-    if (turn < 50) return 4;
-    return Math.floor(turn / 10); // 50턴 이후: 5,6,7...
-  }
+  const getObstacleStrength = (turn) => {
+    const plusTurn = 50; // n턴마다 벽블럭 내구도 증가
+    return Math.min(1 + Math.floor(turn / plusTurn), 6);
+  };
 
   // 🔹 폭탄 설치
   const placeBomb = (x, y) => {
