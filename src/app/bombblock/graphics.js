@@ -90,19 +90,33 @@ export function drawBomb(ctx, cell, cx, cy, size, damage) {
 
   // 심지 위 불꽃
   const fireSize = (4 - cell.bomb.countdown) * 2 + 3;
-  const fireColor = cell.bomb.countdown === 1 ? "red" : "orange";
-  ctx.fillStyle = fireColor;
-  ctx.beginPath();
-  ctx.ellipse(
-    cxCenter - 5,
-    cyCenter - radius - 12,
-    fireSize,
-    fireSize * 0.8,
-    0,
-    0,
-    Math.PI * 2
-  );
-  ctx.fill();
+  const isAlmostExploding = cell.bomb.countdown === 1;
+  const baseColors = isAlmostExploding
+    ? ["#ff3300", "#ff0000", "#cc0000"] // 더 진한 불꽃
+    : ["yellow", "orange", "red"];
+
+  for (let i = 0; i < 3; i++) {
+    const offsetX = (Math.random() - 0.5) * 3;
+    const offsetY = (Math.random() - 0.5) * 3;
+    const intensity = isAlmostExploding ? 1.2 : 1;
+    const flickerSize = fireSize * intensity * (0.8 + Math.random() * 0.4);
+    const color = baseColors[i];
+
+    ctx.globalAlpha = 0.85 - i * 0.3;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(
+      cxCenter - 5 + offsetX,
+      cyCenter - radius - 12 + offsetY,
+      flickerSize,
+      flickerSize * 0.8,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
 
   // 데미지 숫자
   ctx.fillStyle = "white";

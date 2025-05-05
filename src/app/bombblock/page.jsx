@@ -20,6 +20,7 @@ export default function Page() {
   const [bestScore, setBestScore] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
+  const timerRef = useRef(null); // 타이머 참조
 
   const [bombPower, setBombPower] = useState(1);
   const [bombDamage, setBombDamage] = useState(1);
@@ -299,7 +300,8 @@ export default function Page() {
     const hasEmpty = grid.current.flat().some((c) => !c.bomb && !c.obstacle);
     if (!hasEmpty) {
       gameOver.current = true;
-      setIsGameOver(true); // 🔸 모달 띄우기
+      setIsGameOver(true);
+      clearInterval(timerRef.current); // ⛔️ 타이머 멈추기
     }
   };
 
@@ -336,11 +338,11 @@ export default function Page() {
   }, []);
   // 🔹 타이머 시작 (매 1초마다 경과 시간 증가)
   useEffect(() => {
-    const timer = setInterval(() => {
+    timerRef.current = setInterval(() => {
       setElapsedTime((prev) => prev + 1);
     }, 1000);
 
-    return () => clearInterval(timer); // 언마운트 시 타이머 정리
+    return () => clearInterval(timerRef.current);
   }, []);
 
   // 🔹 UI 및 캔버스 출력
@@ -364,28 +366,22 @@ export default function Page() {
               <span className="text-green-500">{turn}</span>
             </span>
             <span>
-              SCORE: <span className="text-red-500">{score}</span>
+              SCORE:<span className="text-red-500">{score}</span>
             </span>
             <span>
-              BEST: <span className="text-red-500">{bestScore}</span>
+              BEST:<span className="text-red-500">{bestScore}</span>
             </span>
-            <span>
-              TIME:{" "}
-              <span className="text-yellow-400">
-                ⏱ {formatTime(elapsedTime)}
-              </span>
-            </span>
+            <span className="text-yellow-400">⏱{formatTime(elapsedTime)}</span>
           </div>
           <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
             <span>
-              RANGE: <span className="text-orange-500">{bombPower}</span>
+              RANGE:<span className="text-orange-500">{bombPower}</span>
             </span>
             <span>
-              DAMAGE: <span className="text-orange-500">{bombDamage}</span>
+              DAMAGE:<span className="text-orange-500">{bombDamage}</span>
             </span>
             <span>
-              PERFORATION:{" "}
-              <span className="text-orange-400">{perforation}</span>
+              PERFORATION:<span className="text-orange-400">{perforation}</span>
             </span>
           </div>
         </div>
@@ -461,9 +457,14 @@ export default function Page() {
             <h2 className="text-2xl font-bold text-red-600 mb-4">
               💥 Game Over!
             </h2>
-            <p className="text-lg text-gray-800 mb-4">
-              Your Score:{" "}
-              <span className="font-semibold text-red-500">{score}</span>
+            <p className="text-lg text-gray-800 mb-2">
+              Score: <span className="font-semibold text-red-500">{score}</span>
+            </p>
+            <p className="text-sm text-gray-600 mb-4">
+              Time:{" "}
+              <span className="text-black font-mono">
+                {formatTime(elapsedTime)}
+              </span>
             </p>
             <button
               className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-lg text-black font-semibold"
