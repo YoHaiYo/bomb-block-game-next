@@ -1,30 +1,31 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabase";
+import { useState } from "react";
 
 export default function LandingPage() {
   const router = useRouter();
-  const [menuOpen, setMenuOpen] = useState(false); // 모바일 메뉴 상태
 
   return (
-    <>
-      {/* 🎯 메인 랜딩 섹션 */}
-      <section className="flex flex-col items-center justify-center text-center px-4 py-20 md:py-32">
-        <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
-          Bomb Block Game
-        </h1>
+    <div className="min-h-screen bg-gray-900 text-white font-mono flex flex-col items-center justify-center px-4">
+      {/* 게임 제목 */}
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-yellow-400 tracking-wide mb-6 text-center flex items-center gap-3">
+        🎮 Bomb Block Game
+      </h1>
 
-        <button
-          onClick={() => {
-            router.push("/bombblock");
-          }}
-          className="bg-amber-500 px-6 py-3 rounded-lg text-lg font-semibold text-white hover:bg-amber-400"
-        >
-          <i className="fas fa-play mr-2"></i>Play Now
-        </button>
-      </section>
-    </>
+      {/* 서브텍스트 */}
+      <p className="text-sm sm:text-base text-gray-300 mb-10 text-center max-w-md">
+        Blow up blocks, chain reactions, and power up your bombs. How long can
+        you survive?
+      </p>
+
+      {/* 시작 버튼 */}
+      <button
+        onClick={() => router.push("/bombblock")}
+        className="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold text-lg sm:text-xl px-8 py-3 rounded-lg shadow-lg ring-2 ring-lime-400 ring-opacity-50 transition"
+      >
+        🚀 Start Game
+      </button>
+    </div>
   );
 }

@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { drawExplosionEffect, drawBomb, drawParticles } from "./graphics";
 
 export default function Page() {
+  const router = useRouter();
   // 🔹 상태 관리 및 참조 초기화
   const canvasRef = useRef(null);
   const gridSize = 8;
   const cellSize = useRef(60);
-  const upgradeTurn = 10;
+  const upgradeTurn = 25;
   const grid = useRef([]);
   const bombQueue = useRef([]);
   const gameOver = useRef(false);
@@ -315,9 +317,15 @@ export default function Page() {
   // 🔹 UI 및 캔버스 출력
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2">
-      <h1 className="text-3xl font-mono text-yellow-400 font-bold mb-2">
-        🕹️Bomb Block Game
+      <h1
+        onClick={() => router.push("/")}
+        className="absolute top-4 left-4 text-lime-400 font-mono text-lg sm:text-xl font-bold cursor-pointer hover:text-lime-400 transition"
+      >
+        BGW
       </h1>
+      <h2 className="text-3xl font-mono text-yellow-400 font-bold mb-2">
+        🕹️Bomb Block Game
+      </h2>
       {/* 점수판  */}
       <div className="mb-3">
         <div className="bg-black text-white font-mono tracking-widest px-6 py-3 rounded-lg border border-yellow-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
