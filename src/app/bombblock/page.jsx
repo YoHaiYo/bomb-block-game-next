@@ -81,8 +81,12 @@ export default function Page() {
     }
   };
   const getObstacleStrength = (turn) => {
-    const plusTurn = 50; // n턴마다 벽블럭 내구도 증가
-    return Math.min(1 + Math.floor(turn / plusTurn), 6);
+    if (turn < 50) return 1; // 1~49턴
+    if (turn < 150) return 2; // 50~149턴
+    if (turn < 300) return 3; // 150~299턴
+    if (turn < 450) return 4; // 300~449턴
+    if (turn < 600) return 5; // 450~599턴
+    return 6; // 600턴 이상 → 최고 난이도
   };
 
   // 🔹 폭탄 설치
