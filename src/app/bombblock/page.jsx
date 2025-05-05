@@ -18,6 +18,8 @@ export default function Page() {
   const [turn, setTurn] = useState(0);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
+
   const [bombPower, setBombPower] = useState(1);
   const [bombDamage, setBombDamage] = useState(1);
   const [perforation, setPerforation] = useState(1);
@@ -286,7 +288,7 @@ export default function Page() {
     const hasEmpty = grid.current.flat().some((c) => !c.bomb && !c.obstacle);
     if (!hasEmpty) {
       gameOver.current = true;
-      alert("Game Over! Refresh to restart.");
+      setIsGameOver(true); // 🔸 모달 띄우기
     }
   };
 
@@ -417,6 +419,25 @@ export default function Page() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {isGameOver && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 text-center shadow-xl w-80">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">
+              💥 Game Over!
+            </h2>
+            <p className="text-lg text-gray-800 mb-4">
+              Your Score:{" "}
+              <span className="font-semibold text-red-500">{score}</span>
+            </p>
+            <button
+              className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-lg text-black font-semibold"
+              onClick={() => window.location.reload()}
+            >
+              Restart
+            </button>
           </div>
         </div>
       )}
