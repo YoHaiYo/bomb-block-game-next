@@ -307,21 +307,37 @@ export default function Page() {
 
   // 🔹 UI 및 캔버스 출력
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 p-4">
-      <h1 className="text-2xl text-yellow-400 font-bold mb-4">
-        Bomb Block Game (Canvas)
+    <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2">
+      <h1 className="text-3xl font-mono text-yellow-400 font-bold mb-2">
+        Bomb Block Game
       </h1>
-      <div className="text-white text-center mb-4 text-base space-y-1">
-        <div className="flex gap-6 justify-center">
-          <span>Turn: {turn}</span>
-          <span>Score: {score}</span>
-          <span>Best: {bestScore}</span>
-        </div>
-        <div className="flex gap-6 justify-center">
-          <span>Range: {bombPower}</span>
-          <span>Damage: {bombDamage}</span>
+      {/* 점수판  */}
+      <div className="mb-3">
+        <div className="bg-black text-white font-mono tracking-widest px-6 py-3 rounded-lg border border-yellow-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
+          <div className="flex justify-center gap-8 text-lg">
+            <span className="">
+              TURN:
+              <span className="text-green-500">{turn}</span>
+            </span>
+            <span>
+              SCORE: <span className="text-red-500">{score}</span>
+            </span>
+            <span>
+              BEST: <span className="text-red-500">{bestScore}</span>
+            </span>
+          </div>
+          <div className="flex justify-center gap-8 text-lg">
+            <span>
+              RANGE: <span className="text-orange-500">{bombPower}</span>
+            </span>
+            <span>
+              DAMAGE: <span className="text-orange-500">{bombDamage}</span>
+            </span>
+          </div>
         </div>
       </div>
+
+      {/* 본 게임 */}
       <canvas
         ref={canvasRef}
         className="bg-gray-800"
@@ -330,9 +346,7 @@ export default function Page() {
       {showUpgrade && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 text-center space-y-4">
-            <h2 className="text-xl font-bold text-gray-800">
-              업그레이드 선택!
-            </h2>
+            <h2 className="text-xl font-bold text-gray-800">Select Upgrade!</h2>
             <div className="flex gap-6 justify-center">
               <button
                 className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-black font-semibold shadow"
