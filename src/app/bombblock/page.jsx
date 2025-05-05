@@ -8,6 +8,7 @@ export default function Page() {
   const canvasRef = useRef(null);
   const gridSize = 8;
   const cellSize = useRef(60);
+  const upgradeTurn = 10;
   const grid = useRef([]);
   const bombQueue = useRef([]);
   const gameOver = useRef(false);
@@ -17,6 +18,8 @@ export default function Page() {
   const [bestScore, setBestScore] = useState(0);
   const [bombPower, setBombPower] = useState(1);
   const [bombDamage, setBombDamage] = useState(1);
+  const [perforation, setPerforation] = useState(1);
+
   const particles = useRef([]);
   const [showUpgrade, setShowUpgrade] = useState(false);
 
@@ -129,6 +132,7 @@ export default function Page() {
 
     // 🔹 방향별 화염 전파
     dirs.forEach(([dx, dy, dir]) => {
+      let penetrated = 0;
       for (let i = 1; i <= power; i++) {
         const nx = x + dx * i;
         const ny = y + dy * i;
@@ -141,8 +145,13 @@ export default function Page() {
         if (neighbor.obstacle) {
           neighbor.obstacle -= damage;
           setScore((s) => s + (neighbor.obstacle <= 0 ? 2 : 1));
-          if (neighbor.obstacle <= 0) neighbor.obstacle = null;
-          break;
+          if (neighbor.obstacle <= 0) {
+            neighbor.obstacle = null;
+          } else {
+            penetrated++;
+            if (penetrated >= perforation) break;
+          }
+          continue;
         }
 
         if (neighbor.bomb && neighbor.bomb.countdown > 0) {
@@ -182,7 +191,7 @@ export default function Page() {
     if ((turn + 1) % 3 === 0) {
       placeRandomObstacles(Math.floor((turn + 1) / 3));
     }
-    if ((turn + 1) % 25 === 0) {
+    if ((turn + 1) % upgradeTurn === 0) {
       setShowUpgrade(true);
       return; // 업그레이드 선택까지 다음 로직 정지
     }
@@ -193,11 +202,9 @@ export default function Page() {
 
   // 카드 선택 처리 핸들러
   const handleUpgrade = (type) => {
-    if (type === "range") {
-      setBombPower((prev) => prev + 1);
-    } else if (type === "damage") {
-      setBombDamage((prev) => prev + 1);
-    }
+    if (type === "range") setBombPower((prev) => prev + 1);
+    else if (type === "damage") setBombDamage((prev) => prev + 1);
+    else if (type === "penetrate") setPerforation((prev) => prev + 1);
     setShowUpgrade(false);
   };
 
@@ -309,7 +316,7 @@ export default function Page() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2">
       <h1 className="text-3xl font-mono text-yellow-400 font-bold mb-2">
-        Bomb Block Game
+        🕹️Bomb Block Game
       </h1>
       {/* 점수판  */}
       <div className="mb-3">
@@ -332,6 +339,10 @@ export default function Page() {
             </span>
             <span>
               DAMAGE: <span className="text-orange-500">{bombDamage}</span>
+            </span>
+            <span>
+              PERFORATION:{" "}
+              <span className="text-orange-400">{perforation}</span>
             </span>
           </div>
         </div>
@@ -359,6 +370,12 @@ export default function Page() {
                 onClick={() => handleUpgrade("damage")}
               >
                 💥 Bomb Damage +1
+              </button>
+              <button
+                className="bg-cyan-400 hover:bg-cyan-500 px-4 py-2 rounded-lg text-white font-semibold shadow"
+                onClick={() => handleUpgrade("penetrate")}
+              >
+                🧿 Perforation +1
               </button>
             </div>
           </div>
