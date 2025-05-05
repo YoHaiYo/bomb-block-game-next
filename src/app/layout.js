@@ -3,13 +3,13 @@ import Navbar from "./component/Navbar";
 import "./globals.css";
 
 export const metadata = {
-  title: "웹개발 템플릿",
-  description: "Next.js + supabase + tailwindCSS + fontawesome",
+  title: "Block Game World",
+  description: "Block Game World",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ko">
+    <html lang="en">
       <head>
         {/* fontawesome */}
         <link

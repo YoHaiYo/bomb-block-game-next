@@ -321,8 +321,8 @@ export default function Page() {
       {/* 점수판  */}
       <div className="mb-3">
         <div className="bg-black text-white font-mono tracking-widest px-6 py-3 rounded-lg border border-yellow-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
-          <div className="flex justify-center gap-8 text-lg">
-            <span className="">
+          <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
+            <span>
               TURN:
               <span className="text-green-500">{turn}</span>
             </span>
@@ -333,7 +333,7 @@ export default function Page() {
               BEST: <span className="text-red-500">{bestScore}</span>
             </span>
           </div>
-          <div className="flex justify-center gap-8 text-lg">
+          <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
             <span>
               RANGE: <span className="text-orange-500">{bombPower}</span>
             </span>
@@ -355,7 +355,7 @@ export default function Page() {
         onClick={handleCanvasClick}
       />
       {/* 업그레이드 카드 */}
-      {true && (
+      {showUpgrade && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4">
           <div className="max-w-4xl w-full">
             <h2 className="text-center text-white text-xl font-bold mb-6 font-mono">
