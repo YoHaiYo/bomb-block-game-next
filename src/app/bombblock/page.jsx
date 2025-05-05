@@ -354,28 +354,52 @@ export default function Page() {
         className="bg-gray-800"
         onClick={handleCanvasClick}
       />
+      {/* 업그레이드 카드 */}
       {showUpgrade && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 text-center space-y-4">
-            <h2 className="text-xl font-bold text-gray-800">Select Upgrade!</h2>
-            <div className="flex gap-6 justify-center">
+          <div className="flex gap-6">
+            {/* Card: Bomb Range */}
+            <div className="bg-gradient-to-b from-yellow-300 to-yellow-500 border-4 border-yellow-600 rounded-xl p-4 w-56 shadow-xl text-center font-mono">
+              <div className="text-4xl mb-2">🔥</div>
+              <h3 className="text-lg font-bold text-gray-900">Bomb Range +1</h3>
+              <p className="text-sm text-gray-800 mt-1">
+                Extend the explosion radius of your bombs.
+              </p>
               <button
-                className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-black font-semibold shadow"
                 onClick={() => handleUpgrade("range")}
+                className="mt-4 bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded-md shadow"
               >
-                🔥 Bomb Range +1
+                Choose
               </button>
+            </div>
+
+            {/* Card: Bomb Damage */}
+            <div className="bg-gradient-to-b from-red-400 to-red-600 border-4 border-red-700 rounded-xl p-4 w-56 shadow-xl text-center font-mono">
+              <div className="text-4xl mb-2">💥</div>
+              <h3 className="text-lg font-bold text-white">Bomb Damage +1</h3>
+              <p className="text-sm text-white mt-1">
+                Increase the damage dealt to blocks.
+              </p>
               <button
-                className="bg-red-400 hover:bg-red-500 px-4 py-2 rounded-lg text-white font-semibold shadow"
                 onClick={() => handleUpgrade("damage")}
+                className="mt-4 bg-red-800 hover:bg-red-900 text-white px-3 py-1 rounded-md shadow"
               >
-                💥 Bomb Damage +1
+                Choose
               </button>
+            </div>
+
+            {/* Card: Penetration */}
+            <div className="bg-gradient-to-b from-cyan-400 to-blue-600 border-4 border-blue-700 rounded-xl p-4 w-56 shadow-xl text-center font-mono">
+              <div className="text-4xl mb-2">🧿</div>
+              <h3 className="text-lg font-bold text-white">Perforation +1</h3>
+              <p className="text-sm text-white mt-1">
+                Penetrate more blocks with explosion.
+              </p>
               <button
-                className="bg-cyan-400 hover:bg-cyan-500 px-4 py-2 rounded-lg text-white font-semibold shadow"
                 onClick={() => handleUpgrade("penetrate")}
+                className="mt-4 bg-blue-800 hover:bg-blue-900 text-white px-3 py-1 rounded-md shadow"
               >
-                🧿 Perforation +1
+                Choose
               </button>
             </div>
           </div>
