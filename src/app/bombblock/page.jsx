@@ -18,6 +18,7 @@ export default function Page() {
   const [turn, setTurn] = useState(0);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
 
   const [bombPower, setBombPower] = useState(1);
@@ -67,16 +68,25 @@ export default function Page() {
       const x = Math.floor(Math.random() * gridSize);
       const y = Math.floor(Math.random() * gridSize);
       const cell = grid.current[y][x];
+
       if (!cell.bomb && !cell.obstacle) {
-        cell.obstacle = 1;
+        const strength = getObstacleStrength(turn);
+        cell.obstacle = strength;
         count--;
       } else if (cell.obstacle) {
-        cell.obstacle++;
+        cell.obstacle += 1; // 기존 벽 강화
         count--;
       }
       attempts++;
     }
   };
+  function getObstacleStrength(turn) {
+    if (turn < 10) return 1;
+    if (turn < 20) return 2;
+    if (turn < 30) return 3;
+    if (turn < 50) return 4;
+    return Math.floor(turn / 10); // 50턴 이후: 5,6,7...
+  }
 
   // 🔹 폭탄 설치
   const placeBomb = (x, y) => {
@@ -305,6 +315,14 @@ export default function Page() {
     }
   };
 
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const secs = (seconds % 60).toString().padStart(2, "0");
+    return `${mins}:${secs}`;
+  };
+
   // 🔹 초기 렌더링 시 게임 세팅
   useEffect(() => {
     resizeCanvas();
@@ -314,6 +332,14 @@ export default function Page() {
     drawGrid();
     window.addEventListener("resize", resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
+  }, []);
+  // 🔹 타이머 시작 (매 1초마다 경과 시간 증가)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer); // 언마운트 시 타이머 정리
   }, []);
 
   // 🔹 UI 및 캔버스 출력
@@ -341,6 +367,12 @@ export default function Page() {
             </span>
             <span>
               BEST: <span className="text-red-500">{bestScore}</span>
+            </span>
+            <span>
+              TIME:{" "}
+              <span className="text-yellow-400">
+                ⏱ {formatTime(elapsedTime)}
+              </span>
             </span>
           </div>
           <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
