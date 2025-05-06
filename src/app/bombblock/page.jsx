@@ -63,7 +63,7 @@ export default function Page() {
     grid.current = newGrid;
   };
 
-  // 🔹 장애물 무작위 배치
+  // 🔹 장애물 무작위 배치 (count : 추가될 벽 개수)
   const placeRandomObstacles = (count = 1) => {
     let attempts = 0;
     while (count > 0 && attempts < 100) {
@@ -72,23 +72,27 @@ export default function Page() {
       const cell = grid.current[y][x];
 
       if (!cell.bomb && !cell.obstacle) {
-        const strength = getObstacleStrength(turn);
+        const strength = getObstacleStrength(turn); // 벽 내구도
         cell.obstacle = strength;
         count--;
       } else if (cell.obstacle) {
-        cell.obstacle += 1; // 기존 벽 강화
+        const minStrength = getObstacleStrength(turn);
+        cell.obstacle = Math.max(cell.obstacle + 1, minStrength);
         count--;
       }
       attempts++;
     }
   };
   const getObstacleStrength = (turn) => {
-    if (turn < 50) return 1; // 1~49턴
-    if (turn < 150) return 2; // 50~149턴
-    if (turn < 300) return 3; // 150~299턴
-    if (turn < 450) return 4; // 300~449턴
-    if (turn < 600) return 5; // 450~599턴
-    return 6; // 600턴 이상 → 최고 난이도
+    if (turn < 50) return 1;
+    if (turn < 150) return 2;
+    if (turn < 300) return 3;
+    if (turn < 450) return 4;
+    if (turn < 600) return 5;
+    // 600턴 이후: 지수적으로 상승
+    const extraTurns = turn - 600;
+    const strength = 5 + Math.floor(Math.pow(extraTurns / 100, 1.3)); // 지수적으로 증가
+    return Math.min(strength, 99); // 상한 설정 (optional)
   };
 
   // 🔹 폭탄 설치
