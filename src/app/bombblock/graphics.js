@@ -117,7 +117,7 @@ export function drawBomb(ctx, cell, cx, cy, size, damage) {
   }
 
   // 데미지 숫자
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "yellow";
   ctx.font = `${size * 0.4}px sans-serif`;
   ctx.fillText(damage, cxCenter, cyCenter);
 }

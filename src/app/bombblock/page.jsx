@@ -23,6 +23,7 @@ export default function Page() {
   const timerRef = useRef(null); // 타이머 참조
 
   const [bombPower, setBombPower] = useState(1);
+  const bombDamageRef = useRef(1);
   const [bombDamage, setBombDamage] = useState(1);
   const [perforation, setPerforation] = useState(1);
 
@@ -160,7 +161,15 @@ export default function Page() {
 
         if (neighbor.obstacle) {
           neighbor.obstacle -= damage;
-          setScore((s) => s + (neighbor.obstacle <= 0 ? 2 : 1));
+          setScore((s) => {
+            const nextScore = s + (neighbor.obstacle <= 0 ? 2 : 1);
+            if (nextScore > bestScore) {
+              setBestScore(nextScore);
+              localStorage.setItem("bombBlockBestScore", nextScore.toString());
+            }
+            return nextScore;
+          });
+
           if (neighbor.obstacle <= 0) {
             neighbor.obstacle = null;
           } else {
@@ -178,6 +187,15 @@ export default function Page() {
     });
 
     return additionalBombs;
+  };
+
+  // 폭탄 데미지 업데이트
+  const updateBombDamage = (fn) => {
+    setBombDamage((prev) => {
+      const next = fn(prev);
+      bombDamageRef.current = next;
+      return next;
+    });
   };
 
   // 🔹 턴 업데이트: 폭탄 처리 + 폭발 + 장애물 추가
@@ -219,7 +237,7 @@ export default function Page() {
   // 카드 선택 처리 핸들러
   const handleUpgrade = (type) => {
     if (type === "range") setBombPower((prev) => prev + 1);
-    else if (type === "damage") setBombDamage((prev) => prev + 1);
+    else if (type === "damage") updateBombDamage((prev) => prev + 1);
     else if (type === "penetrate") setPerforation((prev) => prev + 1);
     setShowUpgrade(false);
   };
@@ -285,7 +303,7 @@ export default function Page() {
 
         // 🔹 폭탄 렌더링
         if (cell.bomb && cell.bomb.countdown > 0) {
-          drawBomb(ctx, cell, cx, cy, cellSize.current, bombDamage);
+          drawBomb(ctx, cell, cx, cy, cellSize.current, bombDamageRef.current);
         }
       }
     }
@@ -453,7 +471,7 @@ export default function Page() {
       )}
       {isGameOver && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 text-center shadow-xl w-80">
+          <div className="bg-white bg-opacity-60 rounded-lg p-6 text-center shadow-xl w-80">
             <h2 className="text-2xl font-bold text-red-600 mb-4">
               💥 Game Over!
             </h2>
