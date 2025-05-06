@@ -83,6 +83,7 @@ export default function Page() {
       attempts++;
     }
   };
+  // 벽 내구도
   const getObstacleStrength = (turn) => {
     if (turn < 50) return 1;
     if (turn < 150) return 2;
@@ -94,6 +95,21 @@ export default function Page() {
     const strength = 5 + Math.floor(Math.pow(extraTurns / 100, 1.3)); // 지수적으로 증가
     return Math.min(strength, 99); // 상한 설정 (optional)
   };
+  // 벽 내구도 별 색상
+  function getObstacleColor(strength) {
+    let lightness;
+    if (strength <= 10) {
+      // 내구도 1~10: 1 단위로 점차 어둡게
+      lightness = 60 - strength * 4;
+    } else {
+      // 내구도 11 이상: 10 단위로 단계적으로 어둡게
+      const overLevel = Math.floor((strength - 1) / 10); // 11~20→1, 21~30→2, ...
+      lightness = 20 - overLevel * 5;
+    }
+    // 최소 밝기 제한
+    lightness = Math.max(lightness, 5);
+    return `hsl(0, 0%, ${lightness}%)`;
+  }
 
   // 🔹 폭탄 설치
   const placeBomb = (x, y) => {
@@ -292,10 +308,9 @@ export default function Page() {
 
         // 🔹 장애물 렌더링
         if (cell.obstacle) {
-          const lightness = Math.max(20, 60 - cell.obstacle * 8);
-          ctx.fillStyle = `hsl(0, 0%, ${lightness}%)`;
+          ctx.fillStyle = getObstacleColor(cell.obstacle);
           ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
-          // ✅ 폰트는 매번 명시적으로 재지정
+
           ctx.font = `${cellSize.current * 0.5}px sans-serif`;
           ctx.fillStyle = "white";
           ctx.fillText(
