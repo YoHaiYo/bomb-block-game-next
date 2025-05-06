@@ -1,22 +1,34 @@
 export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {
   if (cell.explodeTimer > 0) {
-    // 🔸 셀 기본 폭발 배경
-    const phase = cell.flashPhase;
-    const color = phase % 2 === 0 ? "yellow" : "orange";
-    ctx.fillStyle = color;
+    const centerX = cx + cellSize / 2;
+    const centerY = cy + cellSize / 2;
+    const radius = cellSize * 0.6;
+
+    // 🔥 방사형 화염 효과 (radial gradient)
+    const gradient = ctx.createRadialGradient(
+      centerX,
+      centerY,
+      0,
+      centerX,
+      centerY,
+      radius
+    );
+
+    gradient.addColorStop(0, "#fffde7"); // 중심 - 거의 흰색
+    gradient.addColorStop(0.2, "#fff176"); // 노랑
+    gradient.addColorStop(0.5, "#ff9800"); // 주황
+    gradient.addColorStop(1, "#f44336"); // 빨강
+
+    ctx.fillStyle = gradient;
     ctx.fillRect(cx, cy, cellSize, cellSize);
 
-    // 🔸 파티클 최초 생성 (한 번만)
+    // 🎆 파티클 최초 생성
     if (cell.explodeTimer === 15) {
       const count = 12;
-      const centerX = cx + cellSize / 2;
-      const centerY = cy + cellSize / 2;
-
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
         const speed = Math.random() * 2 + 1;
         const size = Math.random() * 3 + 2;
-
         particles.push({
           x: centerX,
           y: centerY,
@@ -29,7 +41,7 @@ export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {
       }
     }
 
-    // 🔸 타이머 및 애니메이션 업데이트
+    // ⏳ 폭발 이펙트 타이머 관리
     cell.explodeTimer--;
     if (cell.explodeTimer % 5 === 0) {
       cell.flashPhase++;
@@ -39,17 +51,33 @@ export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {
     }
   }
 }
+
+// 폭파 파티클 퍼지는거
 export function drawParticles(ctx, particles) {
   for (let i = particles.length - 1; i >= 0; i--) {
     const p = particles[i];
-    p.x += p.vx;
-    p.y += p.vy;
+
+    // 속도 조정 (더 넓게 튀게)
+    p.x += p.vx * 1.3; // 속도 약간 증가
+    p.y += p.vy * 1.3;
     p.life -= 1;
 
-    ctx.globalAlpha = p.life / 20;
-    ctx.fillStyle = p.color;
+    // 스파크처럼 랜덤하게 크기 미세 진동
+    const flicker = Math.random() * 0.5;
+
+    // 색상 점점 밝게 → 어둡게 변화
+    const fadeRatio = p.life / 20;
+    const baseColor = p.color === "orange" ? [255, 165, 0] : [255, 255, 0]; // RGB
+
+    const r = Math.min(255, baseColor[0] + 50 * (1 - fadeRatio));
+    const g = Math.min(255, baseColor[1] + 50 * (1 - fadeRatio));
+    const b = baseColor[2] * fadeRatio;
+
+    ctx.globalAlpha = fadeRatio;
+    ctx.fillStyle = `rgb(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)})`;
+
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, p.size + flicker, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalAlpha = 1;
 
