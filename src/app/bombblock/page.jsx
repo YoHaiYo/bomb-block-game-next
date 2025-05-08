@@ -36,7 +36,7 @@ export default function Page() {
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [isDescriptionChanging, setIsDescriptionChanging] = useState(false);
   const [description, setDescription] = useState(
-    "[Rule] Drop 💣bombs to blast 🧱walls and earn 🏆points!"
+    "[Rule] Drop 💣bombs to blast 🧱wall Blocks and earn 🏆points!"
   );
   const [isDanger, setIsDanger] = useState(false);
 
@@ -249,7 +249,7 @@ export default function Page() {
   // 해설창 멘트 관리
   const descriptionMap = {
     3: "💣 Bombs explode after 3 turns and can trigger chain reactions! 🔥",
-    5: "🧱 Grid full = Game Over. Good luck! 🍀",
+    5: "🧱 Wall Block full = Game Over. Good luck! 🍀",
   };
   const updateDescriptionByTurn = (currentTurn) => {
     const realTurn = currentTurn + 1;
