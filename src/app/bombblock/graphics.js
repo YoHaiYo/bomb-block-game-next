@@ -51,6 +51,27 @@ export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {
     }
   }
 }
+// 🔹 파티클 폭발 효과 생성 (시각 효과용)
+export const createExplosionParticles = (x, y, cellSize, particles) => {
+  const count = 12;
+  const cx = x * cellSize.current + cellSize.current / 2;
+  const cy = y * cellSize.current + cellSize.current / 2;
+
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 2 + 1;
+    const size = Math.random() * 3 + 2;
+    particles.current.push({
+      x: cx,
+      y: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      size,
+      color: Math.random() < 0.5 ? "orange" : "yellow",
+      life: 20,
+    });
+  }
+};
 
 // 폭파 파티클 퍼지는거
 export function drawParticles(ctx, particles) {

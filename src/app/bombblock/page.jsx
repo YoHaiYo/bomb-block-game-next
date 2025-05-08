@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { drawExplosionEffect, drawBomb, drawParticles } from "./graphics";
+import {
+  drawExplosionEffect,
+  drawBomb,
+  drawParticles,
+  createExplosionParticles,
+} from "./graphics";
 
 export default function Page() {
   const router = useRouter();
@@ -128,28 +133,6 @@ export default function Page() {
     cell.flashPhase = 0;
   };
 
-  // 🔹 파티클 폭발 효과 생성 (시각 효과용)
-  const createExplosionParticles = (x, y) => {
-    const count = 12;
-    const cx = x * cellSize.current + cellSize.current / 2;
-    const cy = y * cellSize.current + cellSize.current / 2;
-
-    for (let i = 0; i < count; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 2 + 1;
-      const size = Math.random() * 3 + 2;
-      particles.current.push({
-        x: cx,
-        y: cy,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size,
-        color: Math.random() < 0.5 ? "orange" : "yellow",
-        life: 20,
-      });
-    }
-  };
-
   // 🔹 폭탄 폭발 처리 + 연쇄 처리
   const explodeBomb = (bomb) => {
     const { x, y, power, damage } = bomb;
@@ -157,7 +140,7 @@ export default function Page() {
     cell.bomb = null;
     cell.explosionDirection = "center";
     startExplosionEffect(cell);
-    createExplosionParticles(x, y);
+    createExplosionParticles(x, y, cellSize, particles);
 
     const additionalBombs = [];
     const dirs = [
