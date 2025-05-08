@@ -38,6 +38,7 @@ export default function Page() {
   const [description, setDescription] = useState(
     "[Rule] Drop 💣bombs to blast 🧱walls and earn 🏆points!"
   );
+  const [isDanger, setIsDanger] = useState(false);
 
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
@@ -46,7 +47,9 @@ export default function Page() {
 
     const padding = 32;
     const availableWidth = window.innerWidth - padding * 2;
-    const availableHeight = window.innerHeight - padding * 2 - 120;
+    const extraVerticalSpace = 200; // 상단+하단 UI 여유 공간
+    const availableHeight =
+      window.innerHeight - padding * 2 - extraVerticalSpace;
     const size = Math.floor(Math.min(availableWidth, availableHeight));
     cellSize.current = Math.floor(size / gridSize);
     canvas.width = cellSize.current * gridSize;
@@ -230,7 +233,7 @@ export default function Page() {
     bombQueue.current = bombQueue.current.filter((b) => b.countdown > 0);
 
     if ((turn + 1) % 3 === 0) {
-      placeRandomObstacles(Math.floor((turn + 1) / 3));
+      placeRandomObstacles(Math.floor((turn + 1) / 3)); // 턴수 나누기 3만큼 벽 생성
     }
     if ((turn + 1) % upgradeTurn === 0) {
       setShowUpgrade(true);
@@ -343,11 +346,30 @@ export default function Page() {
 
   // 🔹 게임 종료 판정
   const checkGameOver = () => {
-    const hasEmpty = grid.current.flat().some((c) => !c.bomb && !c.obstacle);
-    if (!hasEmpty) {
+    const emptyCells = grid.current
+      .flat()
+      .filter((c) => !c.bomb && !c.obstacle);
+    const emptyCount = emptyCells.length;
+
+    // 게임오버 판정
+    if (emptyCount === 0) {
       gameOver.current = true;
       setIsGameOver(true);
       clearInterval(timerRef.current); // ⛔️ 타이머 멈추기
+    }
+
+    // ⚠️ 경고 상태 진입 (3칸 이하만 남았을 때)
+    if (emptyCount <= 3 && !isDanger) {
+      setIsDanger(true);
+      animateDescriptionChange(
+        "⚠️Wall Block is nearly full. Game Over is imminent!"
+      );
+    }
+
+    // ✅ 안전 상태 복구
+    if (emptyCount > 3 && isDanger) {
+      setIsDanger(false);
+      animateDescriptionChange("✅Danger is over. Keep going!");
     }
   };
 
@@ -417,7 +439,7 @@ export default function Page() {
             <span>
               BEST:<span className="text-red-500">{bestScore}</span>
             </span>
-            <span className="text-yellow-400">⏱{formatTime(elapsedTime)}</span>
+            <span className="text-yellow-400">{formatTime(elapsedTime)}</span>
           </div>
           <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
             <span>
@@ -441,9 +463,11 @@ export default function Page() {
       />
       {/* 해설 UI창 */}
       <div
-        className={`mt-4 bg-gray-800 text-white text-sm sm:text-base px-6 py-3 rounded-md font-mono w-full max-w-xl text-center border border-lime-400 shadow transition-all duration-300 ${
+        className={`mt-4 text-white text-sm sm:text-base px-6 py-3 rounded-md font-mono w-full max-w-xl text-center shadow transition-all duration-300 ${
           isDescriptionChanging ? "opacity-0 scale-95" : "opacity-100 scale-100"
-        }`}
+        } ${
+          isDanger ? "border-red-500" : "border-lime-400"
+        } border bg-gray-800`}
       >
         {description}
       </div>
