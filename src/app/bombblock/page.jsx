@@ -34,6 +34,10 @@ export default function Page() {
 
   const particles = useRef([]);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [isDescriptionChanging, setIsDescriptionChanging] = useState(false);
+  const [description, setDescription] = useState(
+    "[Rule] Drop 💣bombs to blast 🧱walls and earn 🏆points!"
+  );
 
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
@@ -233,8 +237,30 @@ export default function Page() {
       return; // 업그레이드 선택까지 다음 로직 정지
     }
 
+    updateDescriptionByTurn(turn); // 🔹 설명 업데이트
+
     checkGameOver();
     saveBestScore();
+  };
+
+  // 해설창 멘트 관리
+  const descriptionMap = {
+    3: "💣 Bombs explode after 3 turns and can trigger chain reactions! 🔥",
+    5: "🧱 Grid full = Game Over. Good luck! 🍀",
+  };
+  const updateDescriptionByTurn = (currentTurn) => {
+    const realTurn = currentTurn + 1;
+    const message = descriptionMap[realTurn];
+    if (message) {
+      animateDescriptionChange(message);
+    }
+  };
+  const animateDescriptionChange = (message) => {
+    setIsDescriptionChanging(true);
+    setTimeout(() => {
+      setDescription(message);
+      setIsDescriptionChanging(false);
+    }, 200);
   };
 
   // 카드 선택 처리 핸들러
@@ -413,6 +439,15 @@ export default function Page() {
         className="bg-gray-800"
         onClick={handleCanvasClick}
       />
+      {/* 해설 UI창 */}
+      <div
+        className={`mt-4 bg-gray-800 text-white text-sm sm:text-base px-6 py-3 rounded-md font-mono w-full max-w-xl text-center border border-lime-400 shadow transition-all duration-300 ${
+          isDescriptionChanging ? "opacity-0 scale-95" : "opacity-100 scale-100"
+        }`}
+      >
+        {description}
+      </div>
+
       {/* 업그레이드 카드 */}
       {showUpgrade && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4">
