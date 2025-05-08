@@ -190,13 +190,13 @@ export default function Page() {
             return nextScore;
           });
 
-          if (neighbor.obstacle <= 0) {
+          const wasDestroyed = neighbor.obstacle <= 0;
+          if (wasDestroyed) {
             neighbor.obstacle = null;
-          } else {
-            penetrated++;
-            if (penetrated >= perforation) break;
           }
-          continue;
+
+          penetrated++;
+          if (penetrated >= perforation) break;
         }
 
         if (neighbor.bomb && neighbor.bomb.countdown > 0) {
@@ -389,10 +389,10 @@ export default function Page() {
         onClick={() => router.push("/")}
         className="absolute top-4 left-4 text-lime-400 font-mono text-lg sm:text-xl font-bold cursor-pointer hover:text-lime-400 transition"
       >
-        BGW
+        Home
       </h1>
       <h2 className="text-3xl font-mono text-yellow-400 font-bold mb-2">
-        🕹️Bomb Block Game
+        💣Bomb Block Game
       </h2>
       {/* 점수판  */}
       <div className="mb-3">
