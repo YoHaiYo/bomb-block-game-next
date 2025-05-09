@@ -3,8 +3,9 @@ import Navbar from "./component/Navbar";
 import "./globals.css";
 
 export const metadata = {
-  title: "Block Game World",
-  description: "Block Game World",
+  title: "BlockGG",
+  description:
+    "New meta of block games! This is a novel collection of web block games.",
 };
 
 export default function RootLayout({ children }) {

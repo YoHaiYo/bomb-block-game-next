@@ -420,7 +420,7 @@ export default function Page() {
         onClick={() => router.push("/")}
         className="absolute top-4 left-4 text-lime-400 font-mono text-lg sm:text-xl font-bold cursor-pointer hover:text-lime-400 transition"
       >
-        Home
+        BlockGG
       </h1>
       <h2 className="text-3xl font-mono text-yellow-400 font-bold mb-2">
         💣Bomb Block Game
