@@ -479,6 +479,14 @@ export default function Page() {
             <h2 className="text-center text-white text-xl font-bold mb-6 font-mono">
               Choose an Upgrade to Power Up!
             </h2>
+            <div className="text-center text-sm sm:text-base text-white font-mono mb-4">
+              [Current Stats] 🔥Range:{" "}
+              <span className="text-lime-200 font-bold">{bombPower}</span>,
+              💥Damage:{" "}
+              <span className="text-lime-200 font-bold">{bombDamage}</span>,
+              🧿Penetration:{" "}
+              <span className="text-lime-200 font-bold">{perforation}</span>
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
               {/* Card: Bomb Range */}
               <div
@@ -539,12 +547,32 @@ export default function Page() {
             <p className="text-lg text-gray-800 mb-2">
               Score: <span className="font-semibold text-red-500">{score}</span>
             </p>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 mb-2">
               Time:{" "}
               <span className="text-black font-mono">
                 {formatTime(elapsedTime)}
               </span>
             </p>
+            <p className="text-sm text-gray-700 mb-1 font-mono">
+              TURN: <span className="text-blue-700 font-semibold">{turn}</span>
+            </p>
+            <p className="text-sm text-gray-700 mb-1 font-mono">
+              🔥 Range:{" "}
+              <span className="text-orange-600 font-semibold">{bombPower}</span>
+            </p>
+            <p className="text-sm text-gray-700 mb-1 font-mono">
+              💥 Damage:{" "}
+              <span className="text-orange-600 font-semibold">
+                {bombDamage}
+              </span>
+            </p>
+            <p className="text-sm text-gray-700 mb-4 font-mono">
+              🧿 Penetration:{" "}
+              <span className="text-orange-600 font-semibold">
+                {perforation}
+              </span>
+            </p>
+
             <button
               className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-lg text-black font-semibold"
               onClick={() => window.location.reload()}
