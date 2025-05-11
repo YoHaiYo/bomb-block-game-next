@@ -249,8 +249,8 @@ export default function Page() {
 
   // 해설창 멘트 관리
   const descriptionMap = {
-    3: "💣 Bombs explode after 3 turns and can trigger chain reactions! 🔥",
-    5: "🧱 Wall Block full = Game Over. Good luck! 🍀",
+    3: "💣Bombs explode after 3 turns and can trigger chain reactions!🔥",
+    5: "🧱Wall Block full=Game Over. Good luck!🍀",
   };
   const updateDescriptionByTurn = (currentTurn) => {
     const realTurn = currentTurn + 1;
@@ -570,7 +570,7 @@ export default function Page() {
               className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-lg text-black font-semibold"
               onClick={() => window.location.reload()}
             >
-              Restart
+              Try Again
             </button>
           </div>
         </div>
