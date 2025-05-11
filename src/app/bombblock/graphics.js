@@ -170,3 +170,43 @@ export function drawBomb(ctx, cell, cx, cy, size, damage) {
   ctx.font = `${size * 0.4}px sans-serif`;
   ctx.fillText(damage, cxCenter, cyCenter);
 }
+export function drawWallBlock(ctx, cx, cy, size, strength, color) {
+  // 배경 색상
+  ctx.fillStyle = color;
+  ctx.fillRect(cx, cy, size, size);
+
+  // 비정형 격자 구성
+  const rowCounts = [3, 4, 3];
+  const colCounts = [3, 5, 4];
+  const rows = rowCounts[(cx + cy) % rowCounts.length]; // 위치 기반 선택
+  const cols = colCounts[(cx + cy) % colCounts.length];
+  const rowHeight = size / rows;
+  const colWidth = size / cols;
+
+  ctx.strokeStyle = "rgba(30,30,30,0.3)";
+  ctx.lineWidth = 1;
+
+  // 줄마다 약간 오프셋을 줌
+  for (let y = 0; y <= rows; y++) {
+    const offsetY = cy + y * rowHeight + (y % 2 === 0 ? 0 : 0.5);
+    ctx.beginPath();
+    ctx.moveTo(cx, offsetY);
+    ctx.lineTo(cx + size, offsetY);
+    ctx.stroke();
+  }
+
+  for (let x = 0; x <= cols; x++) {
+    const offsetX = cx + x * colWidth + (x % 2 === 0 ? 0 : 0.5);
+    ctx.beginPath();
+    ctx.moveTo(offsetX, cy);
+    ctx.lineTo(offsetX, cy + size);
+    ctx.stroke();
+  }
+
+  // 내구도 숫자
+  ctx.fillStyle = "white";
+  ctx.font = `${size * 0.45}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(strength, cx + size / 2, cy + size / 2);
+}

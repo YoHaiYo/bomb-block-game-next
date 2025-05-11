@@ -7,6 +7,7 @@ import {
   drawBomb,
   drawParticles,
   createExplosionParticles,
+  drawWallBlock,
 } from "./graphics";
 
 export default function Page() {
@@ -320,16 +321,8 @@ export default function Page() {
 
         // 🔹 장애물 렌더링
         if (cell.obstacle) {
-          ctx.fillStyle = getObstacleColor(cell.obstacle);
-          ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
-
-          ctx.font = `${cellSize.current * 0.5}px sans-serif`;
-          ctx.fillStyle = "white";
-          ctx.fillText(
-            cell.obstacle,
-            cx + cellSize.current / 2,
-            cy + cellSize.current / 2
-          );
+          const color = getObstacleColor(cell.obstacle);
+          drawWallBlock(ctx, cx, cy, cellSize.current, cell.obstacle, color);
         }
 
         // 🔹 폭탄 렌더링
