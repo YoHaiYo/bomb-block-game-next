@@ -51,7 +51,7 @@ export default function Page() {
     setToasts((prev) => [...prev, { id, message, type, position }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, 2000);
+    }, 750);
   };
 
   // 🔹 캔버스 크기 자동 조정
@@ -167,14 +167,11 @@ export default function Page() {
     const bonusDamage = chainCount;
     const totalDamage = damage + bonusDamage;
 
-    // 연쇄 폭발 토스트 메시지 표시 (연쇄 1과 2 모두 표시)
-    if (chainCount > 0) {
-      // 연쇄가 발생할 때마다 표시
-      const messages = [
-        "🔥 Chain Reaction! +1 Damage",
-        "💥 Double Chain! +2 Damage",
-      ];
-      const message = messages[chainCount - 1];
+    // 연쇄 폭발 토스트 메시지 표시 (연쇄 1과 2 각각 표시)
+    if (chainCount > 0) {  // chainCount가 1 또는 2일 때 메시지 표시
+      const message = chainCount === 1 
+        ? "🔥 Chain Reaction! +1 Damage"
+        : "💥 Double Chain! +2 Damage";
       // 캔버스 중앙 좌표 계산
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
@@ -628,7 +625,7 @@ export default function Page() {
             key={toast.id}
             className={`absolute transform transition-all duration-300 ease-out ${
               toast.type === "chain"
-                ? "bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                ? "bg-gradient-to-r from-orange-500/80 to-red-600 text-white"
                 : "bg-gray-800 text-white"
             } px-4 py-2 rounded-lg shadow-lg font-mono text-sm sm:text-base
             translate-x-[-50%] translate-y-[-50%]
