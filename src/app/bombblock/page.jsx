@@ -451,12 +451,21 @@ export default function Page() {
   // 🔹 UI 및 캔버스 출력
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2">
-      <h1
-        onClick={() => router.push("/")}
-        className="absolute top-4 left-4 text-lime-400 font-mono text-lg sm:text-xl font-bold cursor-pointer hover:text-lime-400 transition"
-      >
-        BlockGG
-      </h1>
+      {/* 헤더/로고 영역 */}
+      <div className="w-full flex justify-start mb-1 px-3">
+        <div className="flex items-center gap-2">
+          <span
+            onClick={() => router.push("/")}
+            className="text-lime-400 font-mono text-lg sm:text-xl font-bold cursor-pointer hover:text-lime-400 transition"
+          >
+            BlockGG
+          </span>
+          <span className="text-xs sm:text-base text-white flex items-center gap-1 ml-2">
+          <i className="fa-solid fa-arrow-left mr-1" />
+            Want more games?            
+          </span>
+        </div>
+      </div>
       <h2 className="text-3xl font-mono text-yellow-400 font-bold mb-2">
         💣Bomb Block Game
       </h2>
