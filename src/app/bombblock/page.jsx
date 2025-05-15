@@ -41,6 +41,19 @@ export default function Page() {
   );
   const [isDanger, setIsDanger] = useState(false);
 
+  // 토스트 메시지 관리를 위한 상태 추가
+  const [toasts, setToasts] = useState([]);
+  const toastCounter = useRef(0); // 고유 ID 생성을 위한 카운터
+
+  // 토스트 추가 함수 (위치 정보 추가)
+  const addToast = (message, type = "chain", position = null) => {
+    const id = toastCounter.current++; // 카운터를 사용하여 고유 ID 생성
+    setToasts((prev) => [...prev, { id, message, type, position }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    }, 2000);
+  };
+
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
     const canvas = canvasRef.current;
@@ -142,13 +155,33 @@ export default function Page() {
   };
 
   // 🔹 폭탄 폭발 처리 + 연쇄 처리
-  const explodeBomb = (bomb) => {
+  const explodeBomb = (bomb, chainCount = 0) => {
     const { x, y, power, damage } = bomb;
     const cell = grid.current[y][x];
     cell.bomb = null;
     cell.explosionDirection = "center";
     startExplosionEffect(cell);
     createExplosionParticles(x, y, cellSize, particles);
+
+    // 연쇄 횟수에 따른 데미지 보너스 계산
+    const bonusDamage = chainCount;
+    const totalDamage = damage + bonusDamage;
+
+    // 연쇄 폭발 토스트 메시지 표시 (연쇄 1과 2 모두 표시)
+    if (chainCount > 0) {
+      // 연쇄가 발생할 때마다 표시
+      const messages = [
+        "🔥 Chain Reaction! +1 Damage",
+        "💥 Double Chain! +2 Damage",
+      ];
+      const message = messages[chainCount - 1];
+      // 캔버스 중앙 좌표 계산
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      addToast(message, "chain", { x: centerX, y: centerY });
+    }
 
     const additionalBombs = [];
     const dirs = [
@@ -171,7 +204,7 @@ export default function Page() {
         startExplosionEffect(neighbor);
 
         if (neighbor.obstacle) {
-          neighbor.obstacle -= damage;
+          neighbor.obstacle -= totalDamage; // 보너스 데미지 적용
           setScore((s) => {
             const nextScore = s + (neighbor.obstacle <= 0 ? 2 : 1);
             if (nextScore > bestScore) {
@@ -217,6 +250,12 @@ export default function Page() {
     const toExplode = bombQueue.current.filter((b) => b.countdown <= 0);
     const explodedSet = new Set();
     const queue = [...toExplode];
+    const chainCountMap = new Map(); // 연쇄 횟수를 추적하는 맵
+
+    // 초기 폭발 폭탄들의 연쇄 횟수를 0으로 설정
+    toExplode.forEach((bomb) => {
+      chainCountMap.set(`${bomb.x},${bomb.y}`, 0);
+    });
 
     while (queue.length > 0) {
       const bomb = queue.shift();
@@ -224,10 +263,16 @@ export default function Page() {
       if (explodedSet.has(key)) continue;
       explodedSet.add(key);
 
-      const additional = explodeBomb(bomb);
+      const chainCount = chainCountMap.get(key) || 0;
+      const additional = explodeBomb(bomb, chainCount);
+
+      // 추가 폭발 폭탄들의 연쇄 횟수 설정
       additional.forEach((b) => {
         const k = `${b.x},${b.y}`;
-        if (!explodedSet.has(k)) queue.push(b);
+        if (!explodedSet.has(k)) {
+          queue.push(b);
+          chainCountMap.set(k, chainCount + 1); // 연쇄 횟수 증가
+        }
       });
     }
 
@@ -575,6 +620,28 @@ export default function Page() {
           </div>
         </div>
       )}
+
+      {/* 토스트 컨테이너 - Tailwind 애니메이션 적용 */}
+      <div className="fixed inset-0 pointer-events-none z-50">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`absolute transform transition-all duration-300 ease-out ${
+              toast.type === "chain"
+                ? "bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                : "bg-gray-800 text-white"
+            } px-4 py-2 rounded-lg shadow-lg font-mono text-sm sm:text-base
+            translate-x-[-50%] translate-y-[-50%]
+            animate-[toast-float_2s_ease-in-out_forwards]`}
+            style={{
+              left: toast.position ? `${toast.position.x}px` : "50%",
+              top: toast.position ? `${toast.position.y}px` : "50%",
+            }}
+          >
+            {toast.message}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
