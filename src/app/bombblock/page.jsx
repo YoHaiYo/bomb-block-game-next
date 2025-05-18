@@ -152,6 +152,7 @@ export default function Page() {
 
   // 연쇄 데미지 증가 표출
   const showTemporaryDescription = (tempMessage) => {
+    if (turn < 6) return; // 6턴 전에는 메시지 무시
     const prev = description;
     setDescription(tempMessage);
     setTimeout(() => {
