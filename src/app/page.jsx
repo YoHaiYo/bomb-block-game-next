@@ -25,9 +25,14 @@ export default function Home() {
           <p className="text-gray-400 text-base leading-relaxed max-w-xl">
             <span className="text-green-400 font-semibold">BlockGG</span> is a
             one-of-a-kind game platform crafted entirely by{" "}
-            <span className="text-green-400 font-semibold">YoHaiYo</span> — a
-            solo developer who loves inventing and building creative block-style
-            games from scratch.
+            <Link
+              href="https://github.com/YoHaiYo"
+              className="text-green-400 hover:underline"
+            >
+              YoHaiYo
+            </Link>{" "}
+            — a solo developer who loves inventing and building creative
+            block-style games from scratch.
             <br />
             Each game is a bold experiment: fresh, original, and unlike anything
             you’ve seen before.
@@ -97,7 +102,7 @@ export default function Home() {
           href="https://github.com/YoHaiYo"
           className="text-green-400 hover:underline"
         >
-          YoHaYo
+          YoHaiYo
         </Link>
       </footer>
     </div>

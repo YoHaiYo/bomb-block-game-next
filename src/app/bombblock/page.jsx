@@ -453,7 +453,7 @@ export default function Page() {
 
   // 🔹 UI 및 캔버스 출력
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2">
+    <section className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2 overflow-y-hidden">
       {/* 헤더/로고 영역 */}
       <div className="w-full flex justify-start mb-1 px-3">
         <div className="flex items-center gap-2">
@@ -463,7 +463,7 @@ export default function Page() {
             width={60}
             height={0}
             alt="BlockGG Logo"
-            className="object-contain"
+            className="object-contain cursor-pointer"
           />
           <span className="text-xs sm:text-base text-white flex items-center gap-1 ml-2">
             <i className="fa-solid fa-arrow-left mr-1" />
@@ -471,12 +471,12 @@ export default function Page() {
           </span>
         </div>
       </div>
-      <h2 className="text-3xl font-mono text-yellow-400 font-bold mb-2">
+      <h2 className="text-3xl font-mono text-green-400 font-bold mb-2">
         💣Bomb Block Game
       </h2>
       {/* 점수판  */}
       <div className="mb-3">
-        <div className="bg-black text-white font-mono tracking-widest px-6 py-3 rounded-lg border border-yellow-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
+        <div className="bg-black text-white font-mono tracking-widest px-6 py-3  border border-green-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
           <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
             <span>
               TURN:
@@ -512,7 +512,7 @@ export default function Page() {
       />
       {/* 해설 UI창 */}
       <div
-        className={`mt-4 text-white text-sm sm:text-base px-6 py-3 rounded-md font-mono w-full max-w-xl text-center shadow transition-all duration-300 ${
+        className={`mt-4 text-white text-sm sm:text-base px-6 py-3  font-mono w-full max-w-xl text-center shadow transition-all duration-300 ${
           isDescriptionChanging ? "opacity-0 scale-95" : "opacity-100 scale-100"
         } ${
           isDanger ? "border-red-500" : "border-lime-400"
@@ -540,7 +540,7 @@ export default function Page() {
               {/* Card: Bomb Range */}
               <div
                 onClick={() => handleUpgrade("range")}
-                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-yellow-300 to-yellow-500 border-4 border-yellow-600 rounded-xl p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-yellow-300 transition-transform"
+                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-yellow-300 to-yellow-500 border-4 border-yellow-600  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-yellow-300 transition-transform"
               >
                 <div className="text-4xl mb-2">🔥</div>
                 <h3 className="text-lg font-bold text-gray-900">
@@ -549,7 +549,7 @@ export default function Page() {
                 <p className="text-sm text-gray-800 mt-1">
                   Increase how far the explosion travels.
                 </p>
-                <div className="mt-4 bg-yellow-600 text-white px-3 py-1 rounded-md shadow pointer-events-none">
+                <div className="mt-4 bg-yellow-600 text-white px-3 py-1  shadow pointer-events-none">
                   Choose
                 </div>
               </div>
@@ -557,14 +557,14 @@ export default function Page() {
               {/* Card: Bomb Damage */}
               <div
                 onClick={() => handleUpgrade("damage")}
-                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-red-400 to-red-600 border-4 border-red-700 rounded-xl p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-red-300 transition-transform"
+                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-red-400 to-red-600 border-4 border-red-700  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-red-300 transition-transform"
               >
                 <div className="text-4xl mb-2">💥</div>
                 <h3 className="text-lg font-bold text-white">Bomb Damage +1</h3>
                 <p className="text-sm text-white mt-1">
                   Deal more damage to blocks.
                 </p>
-                <div className="mt-4 bg-red-800 text-white px-3 py-1 rounded-md shadow pointer-events-none">
+                <div className="mt-4 bg-red-800 text-white px-3 py-1  shadow pointer-events-none">
                   Choose
                 </div>
               </div>
@@ -572,14 +572,14 @@ export default function Page() {
               {/* Card: Perforation */}
               <div
                 onClick={() => handleUpgrade("penetrate")}
-                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-cyan-400 to-blue-600 border-4 border-blue-700 rounded-xl p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-cyan-300 transition-transform"
+                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-cyan-400 to-blue-600 border-4 border-blue-700  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-cyan-300 transition-transform"
               >
                 <div className="text-4xl mb-2">🧿</div>
                 <h3 className="text-lg font-bold text-white">Perforation +1</h3>
                 <p className="text-sm text-white mt-1">
                   Break through more blocks per direction.
                 </p>
-                <div className="mt-4 bg-blue-800 text-white px-3 py-1 rounded-md shadow pointer-events-none">
+                <div className="mt-4 bg-blue-800 text-white px-3 py-1  shadow pointer-events-none">
                   Choose
                 </div>
               </div>
@@ -589,7 +589,7 @@ export default function Page() {
       )}
       {isGameOver && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white bg-opacity-60 rounded-lg p-6 text-center shadow-xl w-80">
+          <div className="bg-white bg-opacity-60  p-6 text-center shadow-xl w-80">
             <h2 className="text-2xl font-bold text-red-600 mb-4">
               💥 Game Over!
             </h2>
@@ -623,7 +623,7 @@ export default function Page() {
             </p>
 
             <button
-              className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 rounded-lg text-black font-semibold"
+              className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2  text-black font-semibold"
               onClick={() => window.location.reload()}
             >
               Try Again
@@ -641,7 +641,7 @@ export default function Page() {
               toast.type === "chain"
                 ? "bg-gradient-to-r from-orange-500/80 to-red-600 text-white"
                 : "bg-gray-800 text-white"
-            } px-4 py-2 rounded-lg shadow-lg font-mono text-sm sm:text-base
+            } px-4 py-2  shadow-lg font-mono text-sm sm:text-base
             translate-x-[-50%] translate-y-[-50%]
             animate-[toast-float_2s_ease-in-out_forwards]`}
             style={{
@@ -653,6 +653,6 @@ export default function Page() {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
