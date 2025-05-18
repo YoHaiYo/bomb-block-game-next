@@ -1,6 +1,8 @@
 import Footer from "./component/Footer";
 import Navbar from "./component/Navbar";
+import Script from "next/script";
 import "./globals.css";
+import Analytics from "./component/Analytics";
 
 export const metadata = {
   title: "BlockGG",
@@ -12,6 +14,21 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-P4K5RR52Z6"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-P4K5RR52Z6', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
         {/* fontawesome */}
         <link
           rel="stylesheet"
@@ -26,6 +43,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="">
+        <Analytics />
         {/* <Navbar /> */}
         <main className="mx-auto">{children}</main>
 
