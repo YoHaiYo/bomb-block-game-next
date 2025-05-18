@@ -11,6 +11,8 @@ import {
 } from "./graphics";
 import Image from "next/image";
 import RankingModal from "./component/RankingModal";
+import GameOverModal from "./component/GameOverModal";
+import RankingListModal from "./component/RankingListModal";
 
 export default function Page() {
   const router = useRouter();
@@ -45,6 +47,7 @@ export default function Page() {
   const [showRankingModal, setShowRankingModal] = useState(false);
   const [nickname, setNickname] = useState("");
   const [message, setMessage] = useState("");
+  const [showRankingList, setShowRankingList] = useState(false);
 
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
@@ -389,8 +392,8 @@ export default function Page() {
       .filter((c) => !c.bomb && !c.obstacle);
     const emptyCount = emptyCells.length;
 
-    // 게임오버 판정
-    if (emptyCount === 0) {
+    // 게임오버 판정 emptyCount === 0 @@
+    if (emptyCount < 52) {
       gameOver.current = true;
       setIsGameOver(true);
       clearInterval(timerRef.current); // ⛔️ 타이머 멈추기
@@ -469,6 +472,13 @@ export default function Page() {
             <i className="fa-solid fa-arrow-left mr-1" />
             Want more games?
           </span>
+
+          <button
+            onClick={() => setShowRankingList(true)}
+            className="ml-5 text-xs sm:text-sm text-green-300 font-bold border border-green-400 px-2 py-1 hover:bg-green-700"
+          >
+            🏆 View Rankings
+          </button>
         </div>
       </div>
       <h2 className="text-3xl font-mono text-green-400 font-bold mb-2">
@@ -587,66 +597,21 @@ export default function Page() {
           </div>
         </div>
       )}
-      {true && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white bg-opacity-60  p-6 text-center shadow-xl w-100xx">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">
-              💥 Game Over!
-            </h2>
-            <p className="text-lg text-gray-800 mb-2">
-              Score: <span className="font-semibold text-red-500">{score}</span>
-            </p>
-            <p className="text-sm text-gray-600 mb-2">
-              Time:{" "}
-              <span className="text-black font-mono">
-                {formatTime(elapsedTime)}
-              </span>
-            </p>
-            <p className="text-sm text-gray-700 mb-1 font-mono">
-              TURN: <span className="text-blue-700 font-semibold">{turn}</span>
-            </p>
-            <p className="text-sm text-gray-700 mb-1 font-mono">
-              🔥 Range:{" "}
-              <span className="text-orange-600 font-semibold">{bombPower}</span>
-            </p>
-            <p className="text-sm text-gray-700 mb-1 font-mono">
-              💥 Damage:{" "}
-              <span className="text-orange-600 font-semibold">
-                {bombDamage}
-              </span>
-            </p>
-            <p className="text-sm text-gray-700 mb-4 font-mono">
-              🧿 Penetration:{" "}
-              <span className="text-orange-600 font-semibold">
-                {perforation}
-              </span>
-            </p>
-
-            <p className="text-sm text-gray-800 font-semibold mb-4 p-2">
-              🎉 Great job! You got a high score!
-              <br />
-              Submit it now to join the leaderboard!
-            </p>
-
-            <div className="flex items-center justify-center">
-              {/* <button
-                className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2  text-black font-semibold mr-2"
-                onClick={() => window.location.reload()}
-              >
-                Try Again
-              </button> */}
-
-              <button
-                className="bg-green-400 hover:bg-green-500 px-6 py-2  text-black font-semibold"
-                onClick={() => {
-                  setShowRankingModal(true);
-                }}
-              >
-                Submit Ranking
-              </button>
-            </div>
-          </div>
-        </div>
+      {isGameOver && (
+        <GameOverModal
+          show={isGameOver}
+          score={score}
+          turn={turn}
+          elapsedTime={elapsedTime}
+          bombPower={bombPower}
+          bombDamage={bombDamage}
+          perforation={perforation}
+          formatTime={formatTime}
+          onSubmitRanking={() => {
+            setShowRankingModal(true);
+            setIsGameOver(false);
+          }}
+        />
       )}
 
       {showRankingModal && (
@@ -665,6 +630,13 @@ export default function Page() {
           bombDamage={bombDamage}
           perforation={perforation}
           formatTime={formatTime}
+        />
+      )}
+
+      {showRankingList && (
+        <RankingListModal
+          show={showRankingList}
+          onClose={() => setShowRankingList(false)}
         />
       )}
     </section>

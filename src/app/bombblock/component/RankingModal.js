@@ -19,7 +19,7 @@ export default function RankingModal({
   bombDamage,
   perforation,
   formatTime,
-  gameName = "bombblock", // 기본값 설정 가능
+  gameName = "bombblock",
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -126,7 +126,8 @@ export default function RankingModal({
             </label>
             <input
               type="text"
-              className="w-full px-3 py-2 border border-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400"
+              maxLength={10}
+              className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
               placeholder="Enter your nickname"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
@@ -138,7 +139,8 @@ export default function RankingModal({
             </label>
             <textarea
               rows={4}
-              className="w-full px-3 py-2 border border-gray-500 bg-white text-black resize-y focus:outline-none focus:ring-2 focus:ring-green-400"
+              maxLength={100}
+              className="w-full px-3 py-2 border border-gray-300 bg-white text-black resize-y focus:outline-none focus:ring-2 focus:ring-green-400"
               placeholder="Feel free to write your thoughts on the game!"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -149,7 +151,7 @@ export default function RankingModal({
         {/* 버튼 */}
         <div className="flex justify-center gap-4">
           <button
-            className="bg-green-500 hover:bg-green-400 text-white px-5 py-2 font-bold"
+            className="bg-green-400 hover:bg-green-400 text-white px-5 py-2 font-bold"
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
