@@ -42,19 +42,6 @@ export default function Page() {
   );
   const [isDanger, setIsDanger] = useState(false);
 
-  // 토스트 메시지 관리를 위한 상태 추가
-  const [toasts, setToasts] = useState([]);
-  const toastCounter = useRef(0); // 고유 ID 생성을 위한 카운터
-
-  // 토스트 추가 함수 (위치 정보 추가)
-  const addToast = (message, type = "chain", position = null) => {
-    const id = toastCounter.current++; // 카운터를 사용하여 고유 ID 생성
-    setToasts((prev) => [...prev, { id, message, type, position }]);
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, 750);
-  };
-
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
     const canvas = canvasRef.current;
@@ -155,6 +142,15 @@ export default function Page() {
     cell.flashPhase = 0;
   };
 
+  // 연쇄 데미지 증가 표출
+  const showTemporaryDescription = (tempMessage) => {
+    const prev = description;
+    setDescription(tempMessage);
+    setTimeout(() => {
+      setDescription(prev);
+    }, 1000); // 1초 후 복원
+  };
+
   // 🔹 폭탄 폭발 처리 + 연쇄 처리
   const explodeBomb = (bomb, chainCount = 0) => {
     const { x, y, power, damage } = bomb;
@@ -180,7 +176,7 @@ export default function Page() {
       const rect = canvas.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
-      addToast(message, "chain", { x: centerX, y: centerY });
+      showTemporaryDescription(message);
     }
 
     const additionalBombs = [];
@@ -631,28 +627,6 @@ export default function Page() {
           </div>
         </div>
       )}
-
-      {/* 토스트 컨테이너 - Tailwind 애니메이션 적용 */}
-      <div className="fixed inset-0 pointer-events-none z-50">
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            className={`absolute transform transition-all duration-300 ease-out ${
-              toast.type === "chain"
-                ? "bg-gradient-to-r from-orange-500/80 to-red-600 text-white"
-                : "bg-gray-800 text-white"
-            } px-4 py-2  shadow-lg font-mono text-sm sm:text-base
-            translate-x-[-50%] translate-y-[-50%]
-            animate-[toast-float_2s_ease-in-out_forwards]`}
-            style={{
-              left: toast.position ? `${toast.position.x}px` : "50%",
-              top: toast.position ? `${toast.position.y}px` : "50%",
-            }}
-          >
-            {toast.message}
-          </div>
-        ))}
-      </div>
     </section>
   );
 }
