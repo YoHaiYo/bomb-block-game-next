@@ -41,6 +41,9 @@ export default function Page() {
     "[Rule] Drop 💣bombs to blast 🧱wall Blocks and earn 🏆points!"
   );
   const [isDanger, setIsDanger] = useState(false);
+  const [showRankingModal, setShowRankingModal] = useState(false);
+  const [nickname, setNickname] = useState("");
+  const [message, setMessage] = useState("");
 
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
@@ -583,9 +586,9 @@ export default function Page() {
           </div>
         </div>
       )}
-      {isGameOver && (
+      {true && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-white bg-opacity-60  p-6 text-center shadow-xl w-80">
+          <div className="bg-white bg-opacity-60  p-6 text-center shadow-xl w-100xx">
             <h2 className="text-2xl font-bold text-red-600 mb-4">
               💥 Game Over!
             </h2>
@@ -618,12 +621,120 @@ export default function Page() {
               </span>
             </p>
 
-            <button
-              className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2  text-black font-semibold"
-              onClick={() => window.location.reload()}
-            >
-              Try Again
-            </button>
+            <p className="text-sm text-gray-800 font-semibold bg-white mb-4 p-2">
+              🎉 Great job! You got a high score!
+              <br />
+              Submit it now to join the leaderboard!
+            </p>
+
+            <div className="flex items-center justify-center">
+              {/* <button
+                className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2  text-black font-semibold mr-2"
+                onClick={() => window.location.reload()}
+              >
+                Try Again
+              </button> */}
+
+              <button
+                className="bg-green-400 hover:bg-green-500 px-6 py-2  text-black font-semibold"
+                onClick={() => {
+                  setShowRankingModal(true);
+                }}
+              >
+                Submit Ranking
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showRankingModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-white bg-opacity-90 p-6 sm:p-8  shadow-2xl w-full max-w-md text-center">
+            <h2 className="text-2xl font-bold text-green-700 mb-4">
+              🏆 Submit Your Score
+            </h2>
+
+            {/* 게임 정보 */}
+            <div className="text-gray-800 font-mono text-sm sm:text-base space-y-1 mb-6">
+              <p>
+                Score: <span className="text-red-500 font-bold">{score}</span>
+              </p>
+              <p>
+                Time:{" "}
+                <span className="text-black font-semibold">
+                  {formatTime(elapsedTime)}
+                </span>
+              </p>
+              <p>
+                TURN:{" "}
+                <span className="text-blue-700 font-semibold">{turn}</span>
+              </p>
+              <p>
+                🔥 Range:{" "}
+                <span className="text-orange-600 font-semibold">
+                  {bombPower}
+                </span>
+              </p>
+              <p>
+                💥 Damage:{" "}
+                <span className="text-orange-600 font-semibold">
+                  {bombDamage}
+                </span>
+              </p>
+              <p>
+                🧿 Penetration:{" "}
+                <span className="text-orange-600 font-semibold">
+                  {perforation}
+                </span>
+              </p>
+            </div>
+
+            {/* 입력 필드 */}
+            <div className="space-y-4 text-left mb-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Nickname
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300  focus:outline-none focus:ring-2 focus:ring-green-400"
+                  placeholder="Enter your nickname"
+                  value={nickname}
+                  onChange={(e) => setNickname(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Message
+                </label>
+                <textarea
+                  rows={4} // 기본 4줄 정도
+                  className="w-full px-3 py-2 border border-gray-300 bg-white text-black resize-y focus:outline-none focus:ring-2 focus:ring-green-400"
+                  placeholder="Feel free to write your thoughts on the game!"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* 버튼 */}
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-green-500 hover:bg-green-400 text-white px-5 py-2  font-bold"
+                onClick={() => {
+                  // 실제 제출 함수 나중에 연결
+                }}
+              >
+                Submit
+              </button>
+              <button
+                className="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2  font-bold"
+                onClick={() => setShowRankingModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
