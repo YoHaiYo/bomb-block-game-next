@@ -2,12 +2,8 @@ import Footer from "./component/Footer";
 import Navbar from "./component/Navbar";
 import Script from "next/script";
 import "./globals.css";
-import { Suspense } from "react";
-import dynamic from "next/dynamic";
+import AnalyticsWrapper from "./components/AnalyticsWrapper"; // ✅ 수정된 부분
 
-const Analytics = dynamic(() => import("./component/Analytics"), {
-  ssr: false,
-});
 export const metadata = {
   title: "BlockGG",
   description:
@@ -47,10 +43,8 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="">
-        {/* Suspense로 감싸고 SSR 비활성화한 Analytics */}
-        <Suspense fallback={null}>
-          <Analytics />
-        </Suspense>
+        {/* ✅ 클라이언트 컴포넌트로 분리된 Analytics */}
+        <AnalyticsWrapper />
         {/* <Navbar /> */}
         <main className="mx-auto">{children}</main>
 
