@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Footer from "./component/Footer";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
@@ -16,7 +17,10 @@ export default function Home() {
       </h1>
       {/* 사이트 소개 멘트 */}
       <p className="text-gray-200 text-center max-w-xl mb-10 text-base sm:text-lg font-light">
-        Created by <span className="font-bold text-lime-300">YoHaYo</span>, a solo developer who loves block-style games and enjoys inventing new ways to play.<br />
+        Created by <span className="font-bold text-lime-300">YoHaYo</span>, a
+        solo developer who loves block-style games and enjoys inventing new ways
+        to play.
+        <br />
         Discover unique, addictive, and ever-evolving block games here!
       </p>
       {/* 게임 카드 영역 */}
@@ -40,7 +44,8 @@ export default function Home() {
             💣 Bomb Block Game
           </h2>
           <p className="text-gray-100 text-center text-base mb-4">
-            Drop bombs, blast through wall blocks, and chase your best score.<br />
+            Drop bombs, blast through wall blocks, and chase your best score.
+            <br />
             Simple, fast, and explosively fun!
           </p>
           <button className="px-6 py-2 bg-yellow-400 text-black font-bold rounded-full shadow hover:bg-yellow-300 transition">
@@ -61,17 +66,26 @@ export default function Home() {
             🧪 Elemental Block Game
           </h2>
           <p className="text-gray-100 text-center text-base mb-4">
-            Mix elements, trigger chain reactions, and master the elemental grid.<br />
+            Mix elements, trigger chain reactions, and master the elemental
+            grid.
+            <br />
             <span className="text-blue-300 font-bold">In development...</span>
           </p>
-          <button className="px-6 py-2 bg-gray-400 text-white font-bold rounded-full cursor-not-allowed" disabled>
+          <button
+            className="px-6 py-2 bg-gray-400 text-white font-bold rounded-full cursor-not-allowed"
+            disabled
+          >
             Coming Soon
           </button>
         </div>
       </div>
       {/* 하단 안내(선택) */}
-      <div className="mt-12 text-gray-500 text-xs text-center">
-        &copy; {new Date().getFullYear()} BlockGG by YoHaYo. All rights reserved.
+      <div className="mt-12 text-gray-500 text-sm text-center">
+        &copy; {new Date().getFullYear()} BlockGG by{" "}
+        <Link href="https://github.com/YoHaiYo" className="text-blue-500">
+          YoHaiYo
+        </Link>
+        . All rights reserved.
       </div>
     </div>
   );

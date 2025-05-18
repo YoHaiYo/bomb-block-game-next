@@ -168,10 +168,12 @@ export default function Page() {
     const totalDamage = damage + bonusDamage;
 
     // 연쇄 폭발 토스트 메시지 표시 (연쇄 1과 2 각각 표시)
-    if (chainCount > 0) {  // chainCount가 1 또는 2일 때 메시지 표시
-      const message = chainCount === 1 
-        ? "🔥 Chain Reaction! +1 Damage"
-        : "💥 Double Chain! +2 Damage";
+    if (chainCount > 0) {
+      // chainCount가 1 또는 2일 때 메시지 표시
+      const message =
+        chainCount === 1
+          ? "🔥 Chain Reaction! +1 Damage"
+          : "💥 Double Chain! +2 Damage";
       // 캔버스 중앙 좌표 계산
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
@@ -393,8 +395,8 @@ export default function Page() {
       clearInterval(timerRef.current); // ⛔️ 타이머 멈추기
     }
 
-    // ⚠️ 경고 상태 진입 (3칸 이하만 남았을 때)
-    if (emptyCount <= 3 && !isDanger) {
+    // ⚠️ 경고 상태 진입 (5칸 이하만 남았을 때)
+    if (emptyCount <= 5 && !isDanger) {
       setIsDanger(true);
       animateDescriptionChange(
         "⚠️Wall Block is nearly full. Game Over is imminent!"
@@ -402,7 +404,7 @@ export default function Page() {
     }
 
     // ✅ 안전 상태 복구
-    if (emptyCount > 3 && isDanger) {
+    if (emptyCount > 5 && isDanger) {
       setIsDanger(false);
       animateDescriptionChange("✅Danger is over. Keep going!");
     }
@@ -461,8 +463,8 @@ export default function Page() {
             BlockGG
           </span>
           <span className="text-xs sm:text-base text-white flex items-center gap-1 ml-2">
-          <i className="fa-solid fa-arrow-left mr-1" />
-            Want more games?            
+            <i className="fa-solid fa-arrow-left mr-1" />
+            Want more games?
           </span>
         </div>
       </div>
