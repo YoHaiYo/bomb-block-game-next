@@ -48,6 +48,7 @@ export default function Page() {
   const [nickname, setNickname] = useState("");
   const [message, setMessage] = useState("");
   const [showRankingList, setShowRankingList] = useState(false);
+  const [selectedUpgrade, setSelectedUpgrade] = useState(null);
 
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
@@ -323,6 +324,16 @@ export default function Page() {
     setShowUpgrade(false);
   };
 
+  const handleConfirmUpgrade = () => {
+    if (!selectedUpgrade) return;
+    if (selectedUpgrade === "range") setBombPower((prev) => prev + 1);
+    if (selectedUpgrade === "damage") updateBombDamage((prev) => prev + 1);
+    if (selectedUpgrade === "penetrate") setPerforation((prev) => prev + 1);
+
+    setShowUpgrade(false);
+    setSelectedUpgrade(null);
+  };
+
   // 🔹 마우스 클릭 → 폭탄 설치
   const handleCanvasClick = (e) => {
     if (gameOver.current) return;
@@ -549,8 +560,12 @@ export default function Page() {
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
               {/* Card: Bomb Range */}
               <div
-                onClick={() => handleUpgrade("range")}
-                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-yellow-300 to-yellow-500 border-4 border-yellow-600  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-yellow-300 transition-transform"
+                onClick={() => setSelectedUpgrade("range")}
+                className={`${
+                  selectedUpgrade === "range"
+                    ? "ring-4 ring-green-300 scale-105"
+                    : ""
+                } cursor-pointer w-full sm:w-60 bg-gradient-to-b from-yellow-300 to-yellow-500 border-4 border-yellow-600  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-yellow-300 transition-transform`}
               >
                 <div className="text-4xl mb-2">🔥</div>
                 <h3 className="text-lg font-bold text-gray-900">
@@ -566,8 +581,12 @@ export default function Page() {
 
               {/* Card: Bomb Damage */}
               <div
-                onClick={() => handleUpgrade("damage")}
-                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-red-400 to-red-600 border-4 border-red-700  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-red-300 transition-transform"
+                onClick={() => setSelectedUpgrade("damage")}
+                className={`${
+                  selectedUpgrade === "damage"
+                    ? "ring-4 ring-green-300 scale-105"
+                    : ""
+                } cursor-pointer w-full sm:w-60 bg-gradient-to-b from-red-400 to-red-600 border-4 border-red-700  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-red-300 transition-transform`}
               >
                 <div className="text-4xl mb-2">💥</div>
                 <h3 className="text-lg font-bold text-white">Bomb Damage +1</h3>
@@ -581,8 +600,12 @@ export default function Page() {
 
               {/* Card: Perforation */}
               <div
-                onClick={() => handleUpgrade("penetrate")}
-                className="cursor-pointer w-full sm:w-60 bg-gradient-to-b from-cyan-400 to-blue-600 border-4 border-blue-700  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-cyan-300 transition-transform"
+                onClick={() => setSelectedUpgrade("penetrate")}
+                className={`${
+                  selectedUpgrade === "penetrate"
+                    ? "ring-4 ring-green-300 scale-105"
+                    : ""
+                } cursor-pointer w-full sm:w-60 bg-gradient-to-b from-cyan-400 to-blue-600 border-4 border-blue-700  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-cyan-300 transition-transform`}
               >
                 <div className="text-4xl mb-2">🧿</div>
                 <h3 className="text-lg font-bold text-white">Perforation +1</h3>
@@ -593,6 +616,17 @@ export default function Page() {
                   Choose
                 </div>
               </div>
+            </div>
+            <div className="mt-6 text-center">
+              <button
+                className={`px-6 py-2 font-bold text-white bg-green-500 hover:bg-green-600 transition ${
+                  selectedUpgrade ? "" : "opacity-50 cursor-not-allowed"
+                }`}
+                onClick={handleConfirmUpgrade}
+                disabled={!selectedUpgrade}
+              >
+                Confirm Upgrade
+              </button>
             </div>
           </div>
         </div>
