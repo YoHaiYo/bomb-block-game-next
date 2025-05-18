@@ -9,6 +9,7 @@ import {
   createExplosionParticles,
   drawWallBlock,
 } from "./graphics";
+import Image from "next/image";
 
 export default function Page() {
   const router = useRouter();
@@ -456,12 +457,14 @@ export default function Page() {
       {/* 헤더/로고 영역 */}
       <div className="w-full flex justify-start mb-1 px-3">
         <div className="flex items-center gap-2">
-          <span
+          <Image
             onClick={() => router.push("/")}
-            className="text-lime-400 font-mono text-lg sm:text-xl font-bold cursor-pointer hover:text-lime-400 transition"
-          >
-            BlockGG
-          </span>
+            src="/img/BlockGG_logo.png"
+            width={60}
+            height={0}
+            alt="BlockGG Logo"
+            className="object-contain"
+          />
           <span className="text-xs sm:text-base text-white flex items-center gap-1 ml-2">
             <i className="fa-solid fa-arrow-left mr-1" />
             Want more games?

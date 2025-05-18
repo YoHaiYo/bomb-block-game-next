@@ -1,8 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import Footer from "./component/Footer";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,83 +8,98 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col items-center py-10 px-2">
-      {/* 사이트 타이틀 */}
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-lime-400 font-mono drop-shadow-lg mb-2 tracking-tight">
-        BlockGG
-      </h1>
-      {/* 사이트 소개 멘트 */}
-      <p className="text-gray-200 text-center max-w-xl mb-10 text-base sm:text-lg font-light">
-        Created by <span className="font-bold text-lime-300">YoHaYo</span>, a
-        solo developer who loves block-style games and enjoys inventing new ways
-        to play.
-        <br />
-        Discover unique, addictive, and ever-evolving block games here!
-      </p>
-      {/* 게임 카드 영역 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-3xl">
-        {/* Bomb Block Game Card */}
+    <div className="min-h-screen bg-neutral-950 text-white flex flex-col items-center px-4 py-10">
+      {/* 로고 + 소개 영역을 나란히 구성 */}
+      <section className="flex flex-col sm:flex-row items-center justify-center text-center sm:text-left gap-6 sm:gap-12 max-w-5xl mb-16 px-4">
+        {/* 로고 */}
+        <Image
+          src="/img/BlockGG_logo.png"
+          width={80}
+          height={80}
+          alt="BlockGG Logo"
+          className="object-contain"
+        />
+
+        {/* 소개 텍스트 */}
+        <div>
+          <p className="text-gray-400 text-base leading-relaxed max-w-xl">
+            <span className="text-green-400 font-semibold">BlockGG</span> is a
+            one-of-a-kind game platform crafted entirely by{" "}
+            <span className="text-green-400 font-semibold">YoHaiYo</span> — a
+            solo developer who loves inventing and building creative block-style
+            games from scratch.
+            <br />
+            Each game is a bold experiment: fresh, original, and unlike anything
+            you’ve seen before.
+          </p>
+        </div>
+      </section>
+
+      {/* 게임 카드들 */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-10 w-full max-w-5xl">
+        {/* Bomb Block Game */}
         <div
-          className="group bg-gradient-to-br from-yellow-400/20 to-gray-700/60 rounded-2xl shadow-2xl border border-yellow-400 hover:border-yellow-300 hover:shadow-yellow-300/30 transition-all cursor-pointer flex flex-col items-center p-6 hover:scale-105"
           onClick={() => router.push("/bombblock")}
+          className="bg-neutral-900  border border-green-400 hover:border-green-300 transition-all cursor-pointer shadow-md hover:shadow-green-400/20 flex flex-col"
         >
-          <div className="relative w-full flex justify-center">
+          <div className="p-5">
             <Image
               src="/img/bombblock_thumnail.png"
-              alt="Bomb Block Game"
-              width={320}
-              height={180}
-              className="rounded-xl border-2 border-yellow-300 shadow-lg group-hover:shadow-yellow-200 transition"
-              priority
+              alt="Bomb Block"
+              width={450}
+              height={0}
+              className="w-full"
             />
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2 text-green-300">
+              <i className="fa-solid fa-bomb" /> Bomb Block Game
+            </h3>
+            <p className="text-sm text-gray-300 mb-4">
+              Strategic block destruction with timed bombs. Easy to play, hard
+              to master.
+            </p>
+            <button className="w-full py-2 bg-green-400 hover:bg-green-300 text-black font-bold text-sm uppercase">
+              <i className="fa-solid fa-play mr-2" /> Play Now
+            </button>
           </div>
-          <h2 className="text-2xl font-bold text-yellow-300 mt-4 mb-2 font-mono drop-shadow">
-            💣 Bomb Block Game
-          </h2>
-          <p className="text-gray-100 text-center text-base mb-4">
-            Drop bombs, blast through wall blocks, and chase your best score.
-            <br />
-            Simple, fast, and explosively fun!
-          </p>
-          <button className="px-6 py-2 bg-yellow-400 text-black font-bold rounded-full shadow hover:bg-yellow-300 transition">
-            Play Now
-          </button>
         </div>
-        {/* Elemental Block Game Card (Coming Soon) */}
-        <div className="relative bg-gradient-to-br from-blue-400/20 to-gray-700/60 rounded-2xl shadow-2xl border border-blue-400 flex flex-col items-center p-6 opacity-70">
-          <div className="absolute top-3 right-3">
-            <span className="bg-blue-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow animate-pulse">
-              Coming Soon
-            </span>
+
+        {/* Elemental Block Game */}
+        <div className="bg-neutral-900 border border-green-500 opacity-70 flex flex-col relative">
+          <div className="p-5">
+            <div className="relative w-full aspect-[450/506] bg-gradient-to-br from-green-200/20 to-emerald-400/30 flex items-center justify-center">
+              <div className="absolute top-4 right-4">
+                <span className="text-xs bg-green-700 text-white px-3 py-1 font-semibold animate-pulse">
+                  Coming Soon
+                </span>
+              </div>
+              <i className="fa-solid fa-flask text-6xl text-green-300 opacity-80" />
+            </div>
+            <h3 className="text-xl font-bold mt-4 mb-2 flex items-center gap-2 text-green-300">
+              <i className="fa-solid fa-flask" /> Elemental Block Game
+            </h3>
+            <p className="text-sm text-gray-300 mb-4">
+              Mix elements. Chain reactions. A new kind of logic puzzle awaits.
+            </p>
+            <button
+              className="w-full py-2 bg-gray-600 text-white font-bold text-sm cursor-not-allowed"
+              disabled
+            >
+              <i className="fa-solid fa-hourglass-half mr-2" /> Coming Soon
+            </button>
           </div>
-          <div className="w-[320px] h-[180px] bg-gradient-to-br from-blue-200/30 to-purple-400/30 rounded-xl mb-4 flex items-center justify-center">
-            <i className="fa-solid fa-flask text-6xl text-blue-400 opacity-70" />
-          </div>
-          <h2 className="text-2xl font-bold text-blue-300 mb-2 font-mono drop-shadow">
-            🧪 Elemental Block Game
-          </h2>
-          <p className="text-gray-100 text-center text-base mb-4">
-            Mix elements, trigger chain reactions, and master the elemental
-            grid.
-            <br />
-            <span className="text-blue-300 font-bold">In development...</span>
-          </p>
-          <button
-            className="px-6 py-2 bg-gray-400 text-white font-bold rounded-full cursor-not-allowed"
-            disabled
-          >
-            Coming Soon
-          </button>
         </div>
-      </div>
-      {/* 하단 안내(선택) */}
-      <div className="mt-12 text-gray-500 text-sm text-center">
-        &copy; {new Date().getFullYear()} BlockGG by{" "}
-        <Link href="https://github.com/YoHaiYo" className="text-blue-500">
-          YoHaiYo
+      </section>
+
+      {/* 푸터 */}
+      <footer className="mt-20 text-sm text-gray-500 text-center">
+        &copy; {new Date().getFullYear()} BlockGG. Created by{" "}
+        <Link
+          href="https://github.com/YoHaiYo"
+          className="text-green-400 hover:underline"
+        >
+          YoHaYo
         </Link>
-        . All rights reserved.
-      </div>
+      </footer>
     </div>
   );
 }
