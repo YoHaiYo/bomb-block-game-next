@@ -15,6 +15,9 @@ export default function GameOverModal({
 }) {
   if (!show) return null;
 
+  const rankingCutPoint = 2000;
+  const isEligible = score >= rankingCutPoint;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
       <div className="bg-white bg-opacity-60 p-6 text-center shadow-xl w-100xx border border-gray-400">
@@ -45,19 +48,41 @@ export default function GameOverModal({
           <span className="text-orange-600 font-semibold">{perforation}</span>
         </p>
 
-        <p className="text-sm text-gray-800 font-semibold mb-4 p-2">
-          🎉 Great job! You can enroll ranking!
-          <br />
-          Submit score now to join the ranking board!
-        </p>
+        {/* 안내 메시지 조건부 렌더링 */}
+        {isEligible ? (
+          <p className="text-sm text-gray-800 font-semibold mb-4 p-2">
+            🎉 Great job! You can enroll ranking!
+            <br />
+            Submit score now to join the ranking board!
+          </p>
+        ) : (
+          <p className="text-sm text-gray-700 font-medium mb-4 p-2">
+            ⚠️ You need at least{" "}
+            <span className="text-red-500 font-bold">
+              {rankingCutPoint} points
+            </span>{" "}
+            to register your score.
+            <br />
+            Try again and beat the threshold!
+          </p>
+        )}
 
         <div className="flex items-center justify-center">
-          <button
-            className="bg-green-400 hover:bg-green-500 px-6 py-2 text-black font-semibold"
-            onClick={onSubmitRanking}
-          >
-            Submit Ranking
-          </button>
+          {isEligible ? (
+            <button
+              className="bg-green-400 hover:bg-green-500 px-6 py-2 text-black font-semibold"
+              onClick={onSubmitRanking}
+            >
+              Submit Ranking
+            </button>
+          ) : (
+            <button
+              className="bg-yellow-400 hover:bg-yellow-500 px-6 py-2 text-black font-semibold"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </button>
+          )}
         </div>
       </div>
     </div>

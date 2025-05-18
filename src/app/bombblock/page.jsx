@@ -393,7 +393,7 @@ export default function Page() {
     const emptyCount = emptyCells.length;
 
     // 게임오버 판정 emptyCount === 0 @@
-    if (emptyCount < 52) {
+    if (emptyCount === 0) {
       gameOver.current = true;
       setIsGameOver(true);
       clearInterval(timerRef.current); // ⛔️ 타이머 멈추기

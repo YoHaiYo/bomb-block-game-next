@@ -73,8 +73,11 @@ export default function RankingModal({
         throw new Error("Failed to submit ranking.");
       }
 
-      alert("✅ Ranking submitted!");
-      onClose();
+      // ✅ 등록 성공 시
+      alert(
+        "Your score has been submitted! Click 'View Rankings' to see the ranking board."
+      );
+      window.location.reload();
     } catch (err) {
       console.error("Ranking submission error:", err);
       alert("❌ Error submitting ranking: " + err.message);
@@ -158,12 +161,12 @@ export default function RankingModal({
             {isSubmitting ? "Submitting..." : "Submit"}
           </button>
 
-          <button
+          {/* <button
             className="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 font-bold"
             onClick={onClose}
           >
             Cancel
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
