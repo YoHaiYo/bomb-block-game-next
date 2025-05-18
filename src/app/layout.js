@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { Suspense } from "react";
 
-const Analytics = dynamic(() => import("./components/Analytics"), {
+const Analytics = dynamic(() => import("./component/Analytics"), {
   ssr: false,
 });
 export const metadata = {
