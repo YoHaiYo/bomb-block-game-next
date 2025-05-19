@@ -1,8 +1,10 @@
 import Footer from "./component/Footer";
 import Navbar from "./component/Navbar";
+import { headers } from "next/headers";
 import Script from "next/script";
 import "./globals.css";
 import AnalyticsWrapper from "./component/AnalyticsWrapper"; // ✅ 수정된 부분
+import BodyWrapper from "./component/BodyWrapper";
 
 export const metadata = {
   title: "BlockGG",
@@ -42,20 +44,14 @@ export default function RootLayout({ children }) {
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
         />
       </head>
-      <body className="">
+      <BodyWrapper>
         {/* ✅ 클라이언트 컴포넌트로 분리된 Analytics */}
         <AnalyticsWrapper />
         {/* <Navbar /> */}
-        <main className="mx-auto">{children}</main>
-
-        {/* 토스트 메시지 (기본 숨김) */}
-        <div
-          id="toast-message"
-          className="z-10 fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow-md hidden"
-        ></div>
+        {children}
 
         {/* <Footer /> */}
-      </body>
+      </BodyWrapper>
     </html>
   );
 }

@@ -469,7 +469,7 @@ export default function Page() {
 
   // 🔹 UI 및 캔버스 출력
   return (
-    <section className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2 overflow-y-hidden">
+    <section className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2">
       {/* 헤더/로고 영역 */}
       <div className="w-full flex justify-start mb-1 px-3">
         <div className="flex items-center gap-2">
