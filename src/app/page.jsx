@@ -49,7 +49,7 @@ export default function Home() {
         >
           <div className="p-5">
             <Image
-              src="/img/bombblock_thumnail.png"
+              src="/img/blockGG_thumnail_2.png"
               alt="Bomb Block"
               width={450}
               height={0}
