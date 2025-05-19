@@ -2,7 +2,7 @@ import Footer from "./component/Footer";
 import Navbar from "./component/Navbar";
 import Script from "next/script";
 import "./globals.css";
-import AnalyticsWrapper from "./components/AnalyticsWrapper"; // ✅ 수정된 부분
+import AnalyticsWrapper from "./component/AnalyticsWrapper"; // ✅ 수정된 부분
 
 export const metadata = {
   title: "BlockGG",
