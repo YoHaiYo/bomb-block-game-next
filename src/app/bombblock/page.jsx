@@ -13,6 +13,7 @@ import Image from "next/image";
 import RankingModal from "./component/RankingModal";
 import GameOverModal from "./component/GameOverModal";
 import RankingListModal from "./component/RankingListModal";
+import UpgradeModal from "./component/UpgradeModal";
 
 export default function Page() {
   const router = useRouter();
@@ -545,93 +546,17 @@ export default function Page() {
 
       {/* 업그레이드 카드 */}
       {showUpgrade && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4">
-          <div className="max-w-4xl w-full">
-            <h2 className="text-center text-white text-xl font-bold mb-6 font-mono">
-              Choose an Upgrade to Power Up!
-            </h2>
-            <div className="text-center text-sm sm:text-base text-white font-mono mb-4">
-              [Current Stats] 🔥Range:{" "}
-              <span className="text-lime-200 font-bold">{bombPower}</span>,
-              💥Damage:{" "}
-              <span className="text-lime-200 font-bold">{bombDamage}</span>,
-              🧿Penetration:{" "}
-              <span className="text-lime-200 font-bold">{perforation}</span>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-              {/* Card: Bomb Range */}
-              <div
-                onClick={() => setSelectedUpgrade("range")}
-                className={`${
-                  selectedUpgrade === "range"
-                    ? "ring-4 ring-green-300 scale-105"
-                    : ""
-                } cursor-pointer w-full sm:w-60 bg-gradient-to-b from-yellow-300 to-yellow-500 border-4 border-yellow-600  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-yellow-300 transition-transform`}
-              >
-                <div className="text-4xl mb-2">🔥</div>
-                <h3 className="text-lg font-bold text-gray-900">
-                  Bomb Range +1
-                </h3>
-                <p className="text-sm text-gray-800 mt-1">
-                  Increase how far the explosion travels.
-                </p>
-                <div className="mt-4 bg-yellow-600 text-white px-3 py-1  shadow pointer-events-none">
-                  Choose
-                </div>
-              </div>
-
-              {/* Card: Bomb Damage */}
-              <div
-                onClick={() => setSelectedUpgrade("damage")}
-                className={`${
-                  selectedUpgrade === "damage"
-                    ? "ring-4 ring-green-300 scale-105"
-                    : ""
-                } cursor-pointer w-full sm:w-60 bg-gradient-to-b from-red-400 to-red-600 border-4 border-red-700  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-red-300 transition-transform`}
-              >
-                <div className="text-4xl mb-2">💥</div>
-                <h3 className="text-lg font-bold text-white">Bomb Damage +1</h3>
-                <p className="text-sm text-white mt-1">
-                  Deal more damage to blocks.
-                </p>
-                <div className="mt-4 bg-red-800 text-white px-3 py-1  shadow pointer-events-none">
-                  Choose
-                </div>
-              </div>
-
-              {/* Card: Perforation */}
-              <div
-                onClick={() => setSelectedUpgrade("penetrate")}
-                className={`${
-                  selectedUpgrade === "penetrate"
-                    ? "ring-4 ring-green-300 scale-105"
-                    : ""
-                } cursor-pointer w-full sm:w-60 bg-gradient-to-b from-cyan-400 to-blue-600 border-4 border-blue-700  p-4 shadow-xl text-center font-mono hover:scale-105 hover:ring-4 hover:ring-cyan-300 transition-transform`}
-              >
-                <div className="text-4xl mb-2">🧿</div>
-                <h3 className="text-lg font-bold text-white">Perforation +1</h3>
-                <p className="text-sm text-white mt-1">
-                  Break through more blocks per direction.
-                </p>
-                <div className="mt-4 bg-blue-800 text-white px-3 py-1  shadow pointer-events-none">
-                  Choose
-                </div>
-              </div>
-            </div>
-            <div className="mt-6 text-center">
-              <button
-                className={`px-6 py-2 font-bold text-white bg-green-500 hover:bg-green-600 transition ${
-                  selectedUpgrade ? "" : "opacity-50 cursor-not-allowed"
-                }`}
-                onClick={handleConfirmUpgrade}
-                disabled={!selectedUpgrade}
-              >
-                Confirm Upgrade
-              </button>
-            </div>
-          </div>
-        </div>
+        <UpgradeModal
+          show={showUpgrade}
+          bombPower={bombPower}
+          bombDamage={bombDamage}
+          perforation={perforation}
+          selectedUpgrade={selectedUpgrade}
+          setSelectedUpgrade={setSelectedUpgrade}
+          handleConfirmUpgrade={handleConfirmUpgrade}
+        />
       )}
+      {/* 게임오버 모달달 */}
       {isGameOver && (
         <GameOverModal
           show={isGameOver}
@@ -648,7 +573,7 @@ export default function Page() {
           }}
         />
       )}
-
+      {/* 랭킹 등록 모달 */}
       {showRankingModal && (
         <RankingModal
           show={showRankingModal}
@@ -667,7 +592,7 @@ export default function Page() {
           formatTime={formatTime}
         />
       )}
-
+      {/* 랭킹 리스트 모달 */}
       {showRankingList && (
         <RankingListModal
           show={showRankingList}
