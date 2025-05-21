@@ -30,12 +30,13 @@ export default function RankingListModal({
       // 2. 랭킹 조회 (score 내림차순)
       const { data: rankingsData } = await supabase
         .from("game_ranking")
-        .select("nickname, message, ranking_content")
+        .select("nickname, message, ranking_content, developer_msg")
         .eq("game_id", gameId);
 
       const sorted = (rankingsData || []).sort(
         (a, b) => b.ranking_content.score - a.ranking_content.score
       );
+      console.log(sorted);
 
       setRankings(sorted || []);
       setLoading(false);
@@ -65,7 +66,7 @@ export default function RankingListModal({
       ) : (
         <div className="w-full max-w-3xl flex-1 overflow-y-auto bg-neutral-900 text-white border border-green-500 p-4 space-y-4">
           {rankings.map((item, index) => {
-            const { nickname, message, ranking_content } = item;
+            const { nickname, message, ranking_content, developer_msg } = item;           
             return (
               <div
                 key={index}
@@ -100,6 +101,14 @@ export default function RankingListModal({
                 {message && (
                   <div className="mt-2 text-sm text-gray-400 whitespace-pre-wrap break-words">
                     “{message}”
+                  </div>
+                )}
+                {developer_msg && (
+                  <div className="mt-1 text-sm text-green-400 whitespace-pre-wrap break-words ">                    
+                    <p className="mt-0 text-green-300">
+                    <i className="fa-solid fa-reply fa-rotate-180 text-green-500 mr-1"></i> 
+                      <span className="font-bold">Developer : </span>
+                      {developer_msg}</p>
                   </div>
                 )}
               </div>

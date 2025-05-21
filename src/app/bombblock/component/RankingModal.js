@@ -130,7 +130,7 @@ export default function RankingModal({
             <input
               type="text"
               maxLength={10}
-              className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 text-black"
               placeholder="Enter your nickname"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
@@ -148,7 +148,11 @@ export default function RankingModal({
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-          </div>
+          </div>          
+          <p className="block text-sm font-semibold text-gray-700 !mt-0">
+            The game has received your opinions and is constantly updating them.<br />
+            Share your thoughts. I’ll do my best to reflect them !
+          </p>
         </div>
 
         {/* 버튼 */}
