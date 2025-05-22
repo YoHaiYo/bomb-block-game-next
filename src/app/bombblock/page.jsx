@@ -25,9 +25,9 @@ export default function Page() {
   const grid = useRef([]);
   const bombQueue = useRef([]);
   const gameOver = useRef(false);
-
+  const rankingCutPoint = 2000; // 랭킹 점수컷컷
   const [turn, setTurn] = useState(0);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(2000);
   const [bestScore, setBestScore] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -481,17 +481,30 @@ export default function Page() {
             alt="BlockGG Logo"
             className="object-contain cursor-pointer"
           />
-          <span className="text-xs sm:text-base text-white flex items-center gap-1 ml-2">
-            <i className="fa-solid fa-arrow-left mr-1" />
-            Want more games?
-          </span>
-
-          <button
-            onClick={() => setShowRankingList(true)}
-            className="ml-5 text-xs sm:text-sm text-green-300 font-bold border border-green-400 px-2 py-1 hover:bg-green-700"
-          >
-            🏆 View Rankings
-          </button>
+          <div>
+            <span className="text-xs sm:text-base text-white flex items-center gap-1 ml-2">
+              <i className="fa-solid fa-arrow-left mr-1" />
+              Want more games?
+            </span>
+            <div className="flex items-center gap-1 mt-1">          
+              <button
+                onClick={() => score >= rankingCutPoint ? setShowRankingModal(true) : null}
+                className={`text-xs sm:text-sm font-bold border px-2 py-1 ${
+                  score >= rankingCutPoint
+                    ? "text-green-300 border-green-400 hover:bg-green-700"
+                    : "text-gray-500 border-gray-600 cursor-not-allowed"
+                }`}
+              >
+                📝 Submit Score
+              </button>           
+              <button
+                onClick={() => setShowRankingList(true)}
+                className="text-xs sm:text-sm text-green-300 font-bold border border-green-400 px-2 py-1 hover:bg-green-700"
+              >
+                🏆 View Rankings
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <h2 className="text-3xl font-mono text-green-400 font-bold mb-2">
@@ -561,7 +574,7 @@ export default function Page() {
           handleConfirmUpgrade={handleConfirmUpgrade}
         />
       )}
-      {/* 게임오버 모달달 */}
+      {/* 게임오버 모달 */}
       {isGameOver && (
         <GameOverModal
           show={isGameOver}
@@ -572,6 +585,7 @@ export default function Page() {
           bombDamage={bombDamage}
           perforation={perforation}
           formatTime={formatTime}
+          rankingCutPoint={rankingCutPoint}
           onSubmitRanking={() => {
             setShowRankingModal(true);
             setIsGameOver(false);

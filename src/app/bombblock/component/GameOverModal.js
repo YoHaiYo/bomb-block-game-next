@@ -12,10 +12,10 @@ export default function GameOverModal({
   perforation,
   formatTime,
   onSubmitRanking,
+  rankingCutPoint
 }) {
   if (!show) return null;
-
-  const rankingCutPoint = 2000;
+  
   const isEligible = score >= rankingCutPoint;
 
   return (
