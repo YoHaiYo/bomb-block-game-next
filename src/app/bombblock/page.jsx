@@ -25,9 +25,10 @@ export default function Page() {
   const grid = useRef([]);
   const bombQueue = useRef([]);
   const gameOver = useRef(false);
-  const rankingCutPoint = 2000; // 랭킹 점수컷컷
+  const rankingCutPoint = 2000; // 랭킹 점수컷
+
   const [turn, setTurn] = useState(0);
-  const [score, setScore] = useState(2000);
+  const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -492,6 +493,7 @@ export default function Page() {
               <button
                 onClick={() => {
                   if (score >= rankingCutPoint) {
+                    clearInterval(timerRef.current); // 타이머 멈추기
                     setShowRankingModal(true);
                     setIsSumbitScore(true);
                   }
@@ -566,7 +568,7 @@ export default function Page() {
 
       {/* User Feedback Message */}
       <div className="text-yellow-200 text-xs sm:text-sm px-6 py-2 font-mono w-full max-w-xl text-center">
-      The game has received your opinions and is constantly updating them. Share your thoughts when submitting your ranking. I’ll do my best to reflect them. Enjoy!
+      The game has received your opinions and is constantly updating them. Share your thoughts when submitting your ranking. I'll do my best to reflect them. Enjoy!
       </div>
 
       {/* 업그레이드 카드 */}
@@ -603,7 +605,14 @@ export default function Page() {
       {showRankingModal && (
         <RankingModal
           show={showRankingModal}
-          onClose={() => setShowRankingModal(false)}
+          onClose={() => {
+            setShowRankingModal(false);
+            setIsSumbitScore(false);
+            // 타이머 재시작
+            timerRef.current = setInterval(() => {
+              setElapsedTime((prev) => prev + 1);
+            }, 1000);
+          }}
           onSubmit={() => {}}
           nickname={nickname}
           setNickname={setNickname}
