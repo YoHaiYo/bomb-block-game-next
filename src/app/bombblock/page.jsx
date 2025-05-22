@@ -568,7 +568,7 @@ export default function Page() {
 
       {/* User Feedback Message */}
       <div className="text-yellow-200 text-xs sm:text-sm px-6 py-2 font-mono w-full max-w-xl text-center">
-      The game has received your opinions and is constantly updating them. Share your thoughts when submitting your ranking. I'll do my best to reflect them. Enjoy!
+      {"The game has received your opinions and is constantly updating them. Share your thoughts when submitting your ranking. I'll do my best to reflect them. Enjoy!"}
       </div>
 
       {/* 업그레이드 카드 */}
