@@ -33,6 +33,8 @@ export default function Page() {
   const [isGameOver, setIsGameOver] = useState(false);
   const timerRef = useRef(null); // 타이머 참조
 
+  const [isSumbitScore, setIsSumbitScore] = useState(false); // Submit Score으로 랭킹등록시 RankingModal에 닫기버튼 활성화 여부
+
   const [bombPower, setBombPower] = useState(1);
   const bombDamageRef = useRef(1);
   const [bombDamage, setBombDamage] = useState(1);
@@ -488,7 +490,12 @@ export default function Page() {
             </span>
             <div className="flex items-center gap-1 mt-1">          
               <button
-                onClick={() => score >= rankingCutPoint ? setShowRankingModal(true) : null}
+                onClick={() => {
+                  if (score >= rankingCutPoint) {
+                    setShowRankingModal(true);
+                    setIsSumbitScore(true);
+                  }
+                }}
                 className={`text-xs sm:text-sm font-bold border px-2 py-1 ${
                   score >= rankingCutPoint
                     ? "text-green-300 border-green-400 hover:bg-green-700"
@@ -593,7 +600,6 @@ export default function Page() {
         />
       )}
       {/* 랭킹 등록 모달 */}
-      {/* showRankingModal */}
       {showRankingModal && (
         <RankingModal
           show={showRankingModal}
@@ -610,6 +616,7 @@ export default function Page() {
           bombDamage={bombDamage}
           perforation={perforation}
           formatTime={formatTime}
+          isSumbitScore={isSumbitScore}          
         />
       )}
       {/* 랭킹 리스트 모달 */}

@@ -20,6 +20,7 @@ export default function RankingModal({
   perforation,
   formatTime,
   gameName = "bombblock",
+  isSumbitScore
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -165,12 +166,14 @@ export default function RankingModal({
             {isSubmitting ? "Submitting..." : "Submit"}
           </button>
 
-          {/* <button
-            className="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 font-bold"
-            onClick={onClose}
-          >
-            Cancel
-          </button> */}
+          {isSumbitScore && (
+            <button
+              className="bg-gray-400 hover:bg-gray-500 text-white px-5 py-2 font-bold"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </div>
     </div>
