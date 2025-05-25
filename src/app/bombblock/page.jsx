@@ -9,6 +9,7 @@ import {
   createExplosionParticles,
   drawWallBlock,
 } from "./graphics";
+import { loadBestScore, saveBestScore, formatTime } from "./utils";
 import Image from "next/image";
 import RankingModal from "./component/RankingModal";
 import GameOverModal from "./component/GameOverModal";
@@ -154,16 +155,6 @@ export default function Page() {
     cell.flashPhase = 0;
   };
 
-  // 연쇄 데미지 증가 표출
-  const showTemporaryDescription = (tempMessage) => {
-    if (turn < 6) return; // 6턴 전에는 메시지 무시
-    const prev = description;
-    setDescription(tempMessage);
-    setTimeout(() => {
-      setDescription(prev);
-    }, 1000); // 1초 후 복원
-  };
-
   // 🔹 폭탄 폭발 처리
   const explodeBomb = (bomb) => {
     const { x, y, power, damage } = bomb;
@@ -197,10 +188,7 @@ export default function Page() {
           neighbor.obstacle -= damage;
           setScore((s) => {
             const nextScore = s + (neighbor.obstacle <= 0 ? 2 : 1);
-            if (nextScore > bestScore) {
-              setBestScore(nextScore);
-              localStorage.setItem("bombBlockBestScore", nextScore.toString());
-            }
+            handleScoreUpdate(nextScore);
             return nextScore;
           });
 
@@ -395,24 +383,15 @@ export default function Page() {
   };
 
   // 🔹 최고 점수 로딩/저장
-  const loadBestScore = () => {
-    const saved = localStorage.getItem("bombBlockBestScore");
-    if (saved) setBestScore(parseInt(saved));
-  };
+  useEffect(() => {
+    const savedBestScore = loadBestScore();
+    setBestScore(savedBestScore);
+  }, []);
 
-  const saveBestScore = () => {
-    if (score > bestScore) {
-      setBestScore(score);
-      localStorage.setItem("bombBlockBestScore", score.toString());
-    }
-  };
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
-    const secs = (seconds % 60).toString().padStart(2, "0");
-    return `${mins}:${secs}`;
+  const handleScoreUpdate = (newScore) => {
+    const updatedBestScore = saveBestScore(newScore, bestScore);
+    setBestScore(updatedBestScore);
+    return newScore;
   };
 
   // 🔹 초기 렌더링 시 게임 세팅
@@ -420,11 +399,13 @@ export default function Page() {
     resizeCanvas();
     createGrid();
     placeRandomObstacles(10);
-    loadBestScore();
+    const savedBestScore = loadBestScore();
+    setBestScore(savedBestScore);
     drawGrid();
     window.addEventListener("resize", resizeCanvas);
     return () => window.removeEventListener("resize", resizeCanvas);
   }, []);
+
   // 🔹 타이머 시작 (매 1초마다 경과 시간 증가)
   useEffect(() => {
     timerRef.current = setInterval(() => {
