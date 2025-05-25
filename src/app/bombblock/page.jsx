@@ -265,6 +265,7 @@ export default function Page() {
   const descriptionMap = {
     3: "💣Bombs explode after 3 turns!",
     5: "🧱Wall Block full=Game Over. Good luck!🍀",
+    26: `Upgrade cards appear every ${upgradeTurn} turns. Choose wisely to survive!`,
   };
   const updateDescriptionByTurn = (currentTurn) => {
     const realTurn = currentTurn + 1;
