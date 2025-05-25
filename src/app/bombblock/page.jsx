@@ -164,33 +164,14 @@ export default function Page() {
     }, 1000); // 1초 후 복원
   };
 
-  // 🔹 폭탄 폭발 처리 + 연쇄 처리
-  const explodeBomb = (bomb, chainCount = 0) => {
+  // 🔹 폭탄 폭발 처리
+  const explodeBomb = (bomb) => {
     const { x, y, power, damage } = bomb;
     const cell = grid.current[y][x];
     cell.bomb = null;
     cell.explosionDirection = "center";
     startExplosionEffect(cell);
     createExplosionParticles(x, y, cellSize, particles);
-
-    // 연쇄 횟수에 따른 데미지 보너스 계산
-    const bonusDamage = chainCount;
-    const totalDamage = damage + bonusDamage;
-
-    // 연쇄 폭발 토스트 메시지 표시 (연쇄 1과 2 각각 표시)
-    if (chainCount > 0) {
-      // chainCount가 1 또는 2일 때 메시지 표시
-      const message =
-        chainCount === 1
-          ? "🔥 Chain Reaction! +1 Damage"
-          : "💥 Double Chain! +2 Damage";
-      // 캔버스 중앙 좌표 계산
-      const canvas = canvasRef.current;
-      const rect = canvas.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      showTemporaryDescription(message);
-    }
 
     const additionalBombs = [];
     const dirs = [
@@ -213,7 +194,7 @@ export default function Page() {
         startExplosionEffect(neighbor);
 
         if (neighbor.obstacle) {
-          neighbor.obstacle -= totalDamage; // 보너스 데미지 적용
+          neighbor.obstacle -= damage;
           setScore((s) => {
             const nextScore = s + (neighbor.obstacle <= 0 ? 2 : 1);
             if (nextScore > bestScore) {
@@ -259,12 +240,6 @@ export default function Page() {
     const toExplode = bombQueue.current.filter((b) => b.countdown <= 0);
     const explodedSet = new Set();
     const queue = [...toExplode];
-    const chainCountMap = new Map(); // 연쇄 횟수를 추적하는 맵
-
-    // 초기 폭발 폭탄들의 연쇄 횟수를 0으로 설정
-    toExplode.forEach((bomb) => {
-      chainCountMap.set(`${bomb.x},${bomb.y}`, 0);
-    });
 
     while (queue.length > 0) {
       const bomb = queue.shift();
@@ -272,15 +247,12 @@ export default function Page() {
       if (explodedSet.has(key)) continue;
       explodedSet.add(key);
 
-      const chainCount = chainCountMap.get(key) || 0;
-      const additional = explodeBomb(bomb, chainCount);
+      const additional = explodeBomb(bomb);
 
-      // 추가 폭발 폭탄들의 연쇄 횟수 설정
       additional.forEach((b) => {
         const k = `${b.x},${b.y}`;
         if (!explodedSet.has(k)) {
           queue.push(b);
-          chainCountMap.set(k, chainCount + 1); // 연쇄 횟수 증가
         }
       });
     }
@@ -288,14 +260,14 @@ export default function Page() {
     bombQueue.current = bombQueue.current.filter((b) => b.countdown > 0);
 
     if ((turn + 1) % 3 === 0) {
-      placeRandomObstacles(Math.floor((turn + 1) / 3)); // 턴수 나누기 3만큼 벽 생성
+      placeRandomObstacles(Math.floor((turn + 1) / 3));
     }
     if ((turn + 1) % upgradeTurn === 0) {
       setShowUpgrade(true);
-      return; // 업그레이드 선택까지 다음 로직 정지
+      return;
     }
 
-    updateDescriptionByTurn(turn); // 🔹 설명 업데이트
+    updateDescriptionByTurn(turn);
 
     checkGameOver();
     saveBestScore();
@@ -303,7 +275,7 @@ export default function Page() {
 
   // 해설창 멘트 관리
   const descriptionMap = {
-    3: "💣Bombs explode after 3 turns and can trigger chain reactions!🔥",
+    3: "💣Bombs explode after 3 turns!",
     5: "🧱Wall Block full=Game Over. Good luck!🍀",
   };
   const updateDescriptionByTurn = (currentTurn) => {
@@ -319,14 +291,6 @@ export default function Page() {
       setDescription(message);
       setIsDescriptionChanging(false);
     }, 200);
-  };
-
-  // 카드 선택 처리 핸들러
-  const handleUpgrade = (type) => {
-    if (type === "range") setBombPower((prev) => prev + 1);
-    else if (type === "damage") updateBombDamage((prev) => prev + 1);
-    else if (type === "penetrate") setPerforation((prev) => prev + 1);
-    setShowUpgrade(false);
   };
 
   const handleConfirmUpgrade = () => {
