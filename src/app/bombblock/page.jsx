@@ -53,7 +53,6 @@ export default function Page() {
   const [showRankingList, setShowRankingList] = useState(false);
   const [selectedUpgrade, setSelectedUpgrade] = useState(null);
 
-  const [ownedTankBlocks, setOwnedTankBlocks] = useState([]);
   const [ownedSpecialWeapons, setOwnedSpecialWeapons] = useState({
     tank: 0,
     bomber: 0,
@@ -165,6 +164,20 @@ export default function Page() {
         topObstacles[Math.floor(Math.random() * topObstacles.length)];
       const cell = grid.current[picked.y][picked.x];
       cell.isTank = true; // 탱크 여부 마킹
+    }
+  };
+  const handleUseTankBomb = () => {
+    if (ownedSpecialWeapons.tank > 0) {
+      console.log("💥 탱크폭탄 사용!");
+
+      setOwnedSpecialWeapons((prev) => ({
+        ...prev,
+        tank: prev.tank - 1,
+      }));
+
+      // TODO: 탱크폭탄 효과 넣을 자리
+    } else {
+      console.log("❌ 탱크폭탄이 없습니다.");
     }
   };
 
@@ -552,11 +565,18 @@ export default function Page() {
           {/* 특수폭탄 선택*/}
           <div className="flex justify-around !mt-0">
             {/* 탱크폭탄 */}
-            <div className="relative w-10 h-10 ">
+            <div
+              className="relative w-10 h-10 cursor-pointer"
+              onClick={handleUseTankBomb}
+            >
               <img
                 src="/img/tank.png"
                 alt="Tank Bomb"
-                className="w-full h-full object-contain opacity-80"
+                className={`w-full h-full object-contain ${
+                  ownedSpecialWeapons.tank > 0
+                    ? "opacity-80 hover:opacity-100"
+                    : "opacity-30 cursor-not-allowed"
+                }`}
               />
               <span className="absolute bottom-0 right-0 text-xs bg-black text-white px-1 rounded">
                 x {ownedSpecialWeapons.tank || 0}
@@ -564,7 +584,7 @@ export default function Page() {
             </div>
 
             {/* 폭격기 */}
-            <div className="relative w-10 h-10">
+            <div className="relative w-10 h-10 cursor-pointer">
               <img
                 src="/img/tank.png"
                 alt="Bomber"
@@ -576,7 +596,7 @@ export default function Page() {
             </div>
 
             {/* 핵폭탄 */}
-            <div className="relative w-10 h-10">
+            <div className="relative w-10 h-10 cursor-pointer">
               <img
                 src="/img/tank.png"
                 alt="Nuke"
