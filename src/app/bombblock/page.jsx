@@ -465,7 +465,8 @@ export default function Page() {
         if (cx < 0 || cy < 0 || cx >= gridSize || cy >= gridSize) continue;
 
         const cell = grid.current[cy][cx];
-
+        // 이펙트에 탱크타입에 적용
+        cell.explosionDirection = "tank";
         // 폭파 이펙트
         startExplosionEffect(cell);
         createExplosionParticles(cx, cy, cellSize, particles, {

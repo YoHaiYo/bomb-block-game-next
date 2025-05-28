@@ -1,10 +1,41 @@
+const explosionStyles = {
+  default: {
+    radiusScale: 0.6,
+    gradientStops: [
+      ["#fffde7", 0],
+      ["#fff176", 0.2],
+      ["#ff9800", 0.5],
+      ["#f44336", 1],
+    ],
+    particleCount: 12,
+    particleLife: 20,
+    flashColor: null,
+  },
+  tank: {
+    radiusScale: 0.9,
+    gradientStops: [
+      ["#ffffff", 0],
+      ["#c8ff00", 0.2],
+      ["#ffa500", 0.5],
+      ["#b71c1c", 1],
+    ],
+    particleCount: 24,
+    particleLife: 30,
+    flashColor: "rgba(255,255,255,0.5)",
+  },
+  // 🚧 이후 bomber, nuke 등 추가 예정
+};
+
 export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {
   if (cell.explodeTimer > 0) {
+    const type = cell.explosionDirection || "default";
+    const style = explosionStyles[type] || explosionStyles.default;
+
     const centerX = cx + cellSize / 2;
     const centerY = cy + cellSize / 2;
-    const radius = cellSize * 0.6;
+    const radius = cellSize * style.radiusScale;
 
-    // 🔥 방사형 화염 효과 (radial gradient)
+    // 🔥 폭발 색상 그라디언트
     const gradient = ctx.createRadialGradient(
       centerX,
       centerY,
@@ -13,35 +44,42 @@ export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {
       centerY,
       radius
     );
-
-    gradient.addColorStop(0, "#fffde7"); // 중심 - 거의 흰색
-    gradient.addColorStop(0.2, "#fff176"); // 노랑
-    gradient.addColorStop(0.5, "#ff9800"); // 주황
-    gradient.addColorStop(1, "#f44336"); // 빨강
+    style.gradientStops.forEach(([color, stop]) => {
+      gradient.addColorStop(stop, color);
+    });
 
     ctx.fillStyle = gradient;
     ctx.fillRect(cx, cy, cellSize, cellSize);
 
-    // 🎆 파티클 최초 생성
+    // 🎆 파티클 생성
     if (cell.explodeTimer === 15) {
-      const count = 12;
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < style.particleCount; i++) {
         const angle = Math.random() * Math.PI * 2;
         const speed = Math.random() * 2 + 1;
         const size = Math.random() * 3 + 2;
+        const color = Math.random() < 0.5 ? "orange" : "yellow"; // TODO: 타입별로 분기 가능
+
         particles.push({
           x: centerX,
           y: centerY,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           size,
-          color: Math.random() < 0.5 ? "orange" : "yellow",
-          life: 20,
+          color,
+          life: style.particleLife,
         });
+      }
+
+      // 💥 중심 플래시 효과
+      if (style.flashColor) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, cellSize * 0.3, 0, Math.PI * 2);
+        ctx.fillStyle = style.flashColor;
+        ctx.fill();
       }
     }
 
-    // ⏳ 폭발 이펙트 타이머 관리
+    // ⏳ 타이머 처리
     cell.explodeTimer--;
     if (cell.explodeTimer % 5 === 0) {
       cell.flashPhase++;
@@ -51,6 +89,7 @@ export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {
     }
   }
 }
+
 // 🔹 파티클 폭발 효과 생성 (시각 효과용)
 export const createExplosionParticles = (x, y, cellSize, particles) => {
   const count = 12;
