@@ -170,7 +170,18 @@ export function drawBomb(ctx, cell, cx, cy, size, damage) {
   ctx.font = `${size * 0.4}px sans-serif`;
   ctx.fillText(damage, cxCenter, cyCenter);
 }
-export function drawWallBlock(ctx, cx, cy, size, strength, color) {
+
+const tankImage = new Image();
+tankImage.src = "/img/tank.png"; // public/img/tank.png 위치에 이미지 저장
+export function drawWallBlock(
+  ctx,
+  cx,
+  cy,
+  size,
+  strength,
+  color,
+  isTank = false
+) {
   // 배경 색상
   ctx.fillStyle = color;
   ctx.fillRect(cx, cy, size, size);
@@ -209,4 +220,17 @@ export function drawWallBlock(ctx, cx, cy, size, strength, color) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(strength, cx + size / 2, cy + size / 2);
+
+  // 탱크 아이콘 추가
+  if (isTank && tankImage.complete) {
+    const iconSize = size * 0.8; // 셀보다 살짝 작게
+    const iconX = cx + (size - iconSize) / 2;
+    const iconY = cy + (size - iconSize) / 2;
+
+    // 🔹 불투명도 설정
+    ctx.save(); // 현재 상태 저장
+    ctx.globalAlpha = 0.8; // 불투명하게
+    ctx.drawImage(tankImage, iconX, iconY, iconSize, iconSize);
+    ctx.restore(); // 이전 상태로 복원
+  }
 }

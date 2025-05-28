@@ -22,26 +22,24 @@ export default function Page() {
   const canvasRef = useRef(null);
   const gridSize = 8;
   const cellSize = useRef(60);
-  const upgradeTurn = 25;
   const grid = useRef([]);
   const bombQueue = useRef([]);
+  const upgradeTurn = 25;
   const gameOver = useRef(false);
   const rankingCutPoint = 2000; // 랭킹 점수컷
 
-  const [turn, setTurn] = useState(0);
+  const [turn, setTurn] = useState(75);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
+
   const timerRef = useRef(null); // 타이머 참조
-
   const [isSumbitScore, setIsSumbitScore] = useState(false); // Submit Score으로 랭킹등록시 RankingModal에 닫기버튼 활성화 여부
-
   const [bombPower, setBombPower] = useState(1);
   const bombDamageRef = useRef(1);
   const [bombDamage, setBombDamage] = useState(1);
   const [perforation, setPerforation] = useState(1);
-
   const particles = useRef([]);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [isDescriptionChanging, setIsDescriptionChanging] = useState(false);
@@ -137,6 +135,31 @@ export default function Page() {
     lightness = Math.max(lightness, 5);
     return `hsl(0, 0%, ${lightness}%)`;
   }
+
+  // 특수블럭
+  const transformToTankBlock = () => {
+    const allObstacles = [];
+
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        const cell = grid.current[y][x];
+        if (cell.obstacle) {
+          allObstacles.push({ x, y, strength: cell.obstacle });
+        }
+      }
+    }
+    // 상위 30% 내구도 필터링
+    const sorted = allObstacles.sort((a, b) => b.strength - a.strength);
+    const count = Math.ceil(sorted.length * 0.3);
+    const topObstacles = sorted.slice(0, count);
+
+    if (topObstacles.length > 0) {
+      const picked =
+        topObstacles[Math.floor(Math.random() * topObstacles.length)];
+      const cell = grid.current[picked.y][picked.x];
+      cell.isTank = true; // 탱크 여부 마킹
+    }
+  };
 
   // 🔹 폭탄 설치
   const placeBomb = (x, y) => {
@@ -248,11 +271,16 @@ export default function Page() {
     bombQueue.current = bombQueue.current.filter((b) => b.countdown > 0);
 
     if ((turn + 1) % 3 === 0) {
+      // 3배수 턴마다 장애물 생성
       placeRandomObstacles(Math.floor((turn + 1) / 3));
     }
     if ((turn + 1) % upgradeTurn === 0) {
+      // 업그레이드 턴마다 업글 카드 표출
       setShowUpgrade(true);
       return;
+    }
+    if (turn + 1 === 77) {
+      transformToTankBlock();
     }
 
     updateDescriptionByTurn(turn);
@@ -338,8 +366,18 @@ export default function Page() {
 
         // 🔹 장애물 렌더링
         if (cell.obstacle) {
-          const color = getObstacleColor(cell.obstacle);
-          drawWallBlock(ctx, cx, cy, cellSize.current, cell.obstacle, color);
+          const color = cell.isTank
+            ? "hsl(120, 60%, 25%)" // 탱크블럭 색상
+            : getObstacleColor(cell.obstacle);
+          drawWallBlock(
+            ctx,
+            cx,
+            cy,
+            cellSize.current,
+            cell.obstacle,
+            color,
+            cell.isTank
+          );
         }
 
         // 🔹 폭탄 렌더링
@@ -435,7 +473,7 @@ export default function Page() {
               <i className="fa-solid fa-arrow-left mr-1" />
               Want more games?
             </span>
-            <div className="flex items-center gap-1 mt-1">          
+            <div className="flex items-center gap-1 mt-1">
               <button
                 onClick={() => {
                   if (score >= rankingCutPoint) {
@@ -451,7 +489,7 @@ export default function Page() {
                 }`}
               >
                 📝 Submit Score
-              </button>           
+              </button>
               <button
                 onClick={() => setShowRankingList(true)}
                 className="text-xs sm:text-sm text-green-300 font-bold border border-green-400 px-2 py-1 hover:bg-green-700"
@@ -514,7 +552,7 @@ export default function Page() {
 
       {/* User Feedback Message */}
       <div className="text-yellow-200 text-xs sm:text-sm px-6 py-2 font-mono w-full max-w-xl text-center">
-      {`The game is continuously evolving based on your feedback. Share your thoughts when submitting your score! You can submit your score to the ranking if it's over ${rankingCutPoint} points. I'll do my best to reflect your input. Enjoy!`}
+        {`The game is continuously evolving based on your feedback. Share your thoughts when submitting your score! You can submit your score to the ranking if it's over ${rankingCutPoint} points. I'll do my best to reflect your input. Enjoy!`}
       </div>
 
       {/* 업그레이드 카드 */}
@@ -571,7 +609,7 @@ export default function Page() {
           bombDamage={bombDamage}
           perforation={perforation}
           formatTime={formatTime}
-          isSumbitScore={isSumbitScore}          
+          isSumbitScore={isSumbitScore}
         />
       )}
       {/* 랭킹 리스트 모달 */}
