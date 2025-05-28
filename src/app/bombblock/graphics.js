@@ -171,8 +171,9 @@ export function drawBomb(ctx, cell, cx, cy, size, damage) {
   ctx.fillText(damage, cxCenter, cyCenter);
 }
 
-const tankImage = new Image();
-tankImage.src = "/img/tank.png"; // public/img/tank.png 위치에 이미지 저장
+// const tankImage = new Image();
+// tankImage.src = "/img/tank.png"; // public/img/tank.png 위치에 이미지 저장
+let tankImage = null;
 export function drawWallBlock(
   ctx,
   cx,
@@ -222,15 +223,23 @@ export function drawWallBlock(
   ctx.fillText(strength, cx + size / 2, cy + size / 2);
 
   // 탱크 아이콘 추가
-  if (isTank && tankImage.complete) {
-    const iconSize = size * 0.8; // 셀보다 살짝 작게
-    const iconX = cx + (size - iconSize) / 2;
-    const iconY = cy + (size - iconSize) / 2;
+  if (isTank) {
+    // 클라이언트에서만 생성
+    if (typeof window !== "undefined") {
+      if (!tankImage) {
+        tankImage = new window.Image();
+        tankImage.src = "/img/tank.png";
+      }
 
-    // 🔹 불투명도 설정
-    ctx.save(); // 현재 상태 저장
-    ctx.globalAlpha = 0.8; // 불투명하게
-    ctx.drawImage(tankImage, iconX, iconY, iconSize, iconSize);
-    ctx.restore(); // 이전 상태로 복원
+      // 다 그려졌으면 사용
+      if (tankImage.complete) {
+        const iconSize = size * 0.8;
+        const iconX = cx + (size - iconSize) / 2;
+        const iconY = cy + (size - iconSize) / 2;
+        ctx.globalAlpha = 0.7;
+        ctx.drawImage(tankImage, iconX, iconY, iconSize, iconSize);
+        ctx.globalAlpha = 1;
+      }
+    }
   }
 }

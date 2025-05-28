@@ -53,6 +53,13 @@ export default function Page() {
   const [showRankingList, setShowRankingList] = useState(false);
   const [selectedUpgrade, setSelectedUpgrade] = useState(null);
 
+  const [ownedTankBlocks, setOwnedTankBlocks] = useState([]);
+  const [ownedSpecialWeapons, setOwnedSpecialWeapons] = useState({
+    tank: 0,
+    bomber: 0,
+    nuke: 0,
+  });
+
   // 🔹 캔버스 크기 자동 조정
   const resizeCanvas = () => {
     const canvas = canvasRef.current;
@@ -217,6 +224,15 @@ export default function Page() {
 
           const wasDestroyed = neighbor.obstacle <= 0;
           if (wasDestroyed) {
+            // 💥 탱크블럭 파괴되었을 때
+            if (neighbor.isTank) {
+              setOwnedSpecialWeapons((prev) => ({
+                ...prev,
+                tank: prev.tank + 1,
+              }));
+              // 고유 ID로 추가
+            }
+            neighbor.isTank = false;
             neighbor.obstacle = null;
           }
 
@@ -504,7 +520,7 @@ export default function Page() {
         💣Bomb Block Game
       </h2>
       {/* 점수판  */}
-      <div className="mb-3">
+      <div className="mb-2">
         <div className="bg-black text-white font-mono tracking-widest px-6 py-3  border border-green-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
           <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
             <span>
@@ -529,6 +545,47 @@ export default function Page() {
             <span>
               PERFORATION:<span className="text-orange-400">{perforation}</span>
             </span>
+          </div>
+
+          <hr />
+
+          {/* 특수폭탄 선택*/}
+          <div className="flex justify-around !mt-0">
+            {/* 탱크폭탄 */}
+            <div className="relative w-10 h-10 ">
+              <img
+                src="/img/tank.png"
+                alt="Tank Bomb"
+                className="w-full h-full object-contain opacity-80"
+              />
+              <span className="absolute bottom-0 right-0 text-xs bg-black text-white px-1 rounded">
+                x {ownedSpecialWeapons.tank || 0}
+              </span>
+            </div>
+
+            {/* 폭격기 */}
+            <div className="relative w-10 h-10">
+              <img
+                src="/img/tank.png"
+                alt="Bomber"
+                className="w-full h-full object-contain opacity-50"
+              />
+              <span className="absolute bottom-0 right-0 text-xs bg-black text-white px-1 rounded">
+                x {ownedSpecialWeapons.bomber || 0}
+              </span>
+            </div>
+
+            {/* 핵폭탄 */}
+            <div className="relative w-10 h-10">
+              <img
+                src="/img/tank.png"
+                alt="Nuke"
+                className="w-full h-full object-contain opacity-50"
+              />
+              <span className="absolute bottom-0 right-0 text-xs bg-black text-white px-1 rounded">
+                x {ownedSpecialWeapons.nuke || 0}
+              </span>
+            </div>
           </div>
         </div>
       </div>
