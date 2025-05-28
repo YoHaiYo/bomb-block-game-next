@@ -142,77 +142,6 @@ export default function Page() {
     return `hsl(0, 0%, ${lightness}%)`;
   }
 
-  // 특수블럭
-  const transformToTankBlock = () => {
-    const allObstacles = [];
-
-    for (let y = 0; y < gridSize; y++) {
-      for (let x = 0; x < gridSize; x++) {
-        const cell = grid.current[y][x];
-        if (cell.obstacle) {
-          allObstacles.push({ x, y, strength: cell.obstacle });
-        }
-      }
-    }
-    // 상위 30% 내구도 필터링
-    const sorted = allObstacles.sort((a, b) => b.strength - a.strength);
-    const count = Math.ceil(sorted.length * 0.3);
-    const topObstacles = sorted.slice(0, count);
-
-    if (topObstacles.length > 0) {
-      const picked =
-        topObstacles[Math.floor(Math.random() * topObstacles.length)];
-      const cell = grid.current[picked.y][picked.x];
-      cell.isTank = true; // 탱크 여부 마킹
-    }
-  };
-  const handleUseTankBomb = () => {
-    if (ownedSpecialWeapons.tank > 0) {
-      console.log("💥 탱크폭탄 사용!");
-
-      setOwnedSpecialWeapons((prev) => ({
-        ...prev,
-        tank: prev.tank - 1,
-      }));
-
-      applyTankBlast(); // ← 여기 연결
-    } else {
-      console.log("❌ 탱크폭탄이 없습니다.");
-    }
-  };
-  const applyTankBlast = () => {
-    const x = Math.floor(Math.random() * (gridSize - 1));
-    const y = Math.floor(Math.random() * (gridSize - 1));
-
-    console.log(`💥 탱크블럭 사용: (${x}, ${y}) ~ (${x + 1}, ${y + 1})`);
-
-    for (let dy = 0; dy < 2; dy++) {
-      for (let dx = 0; dx < 2; dx++) {
-        const cx = x + dx;
-        const cy = y + dy;
-        const cell = grid.current[cy][cx];
-
-        // 💣 폭발 방향 지정 (탱크 전용)
-        cell.explosionDirection = "tank";
-        startExplosionEffect(cell); // 🔥 핵심: drawExplosionEffect에서 반응
-
-        // 💥 데미지 regardless of obstacle
-        if (cell.obstacle) {
-          cell.obstacle -= 50;
-          if (cell.obstacle <= 0) {
-            cell.obstacle = null;
-          }
-        }
-
-        // 💥 항상 폭발 효과 발생
-        startExplosionEffect(cell);
-        createExplosionParticles(cx, cy, cellSize, particles, {
-          intense: true,
-        });
-      }
-    }
-  };
-
   // 🔹 폭탄 설치
   const placeBomb = (x, y) => {
     const cell = grid.current[y][x];
@@ -482,6 +411,79 @@ export default function Page() {
     }
   };
 
+  /* 특수블럭 */
+  const transformToTankBlock = () => {
+    const allObstacles = [];
+
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        const cell = grid.current[y][x];
+        if (cell.obstacle) {
+          allObstacles.push({ x, y, strength: cell.obstacle });
+        }
+      }
+    }
+    // 상위 30% 내구도 필터링
+    const sorted = allObstacles.sort((a, b) => b.strength - a.strength);
+    const count = Math.ceil(sorted.length * 0.3);
+    const topObstacles = sorted.slice(0, count);
+
+    if (topObstacles.length > 0) {
+      const picked =
+        topObstacles[Math.floor(Math.random() * topObstacles.length)];
+      const cell = grid.current[picked.y][picked.x];
+      cell.isTank = true; // 탱크 여부 마킹
+    }
+  };
+  const handleUseTankBomb = () => {
+    if (ownedSpecialWeapons.tank > 0) {
+      console.log("💥 탱크폭탄 사용!");
+
+      setOwnedSpecialWeapons((prev) => ({
+        ...prev,
+        tank: prev.tank - 1,
+      }));
+
+      applyTankBlast(); // ← 여기 연결
+    } else {
+      console.log("❌ 탱크폭탄이 없습니다.");
+    }
+  };
+  const applyTankBlast = () => {
+    // 중심점을 기준으로 상하좌우 1칸 → 총 3x3 범위
+    const centerX = Math.floor(Math.random() * gridSize);
+    const centerY = Math.floor(Math.random() * gridSize);
+
+    console.log(`💥 탱크블럭 사용: 중심 (${centerX}, ${centerY})`);
+
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const cx = centerX + dx;
+        const cy = centerY + dy;
+
+        // 🔒 경계 조건 체크
+        if (cx < 0 || cy < 0 || cx >= gridSize || cy >= gridSize) continue;
+
+        const cell = grid.current[cy][cx];
+
+        // 폭파 이펙트
+        startExplosionEffect(cell);
+        createExplosionParticles(cx, cy, cellSize, particles, {
+          intense: true,
+        });
+
+        // 폭파 데미지
+        if (cell.obstacle) {
+          cell.obstacle -= 50;
+          if (cell.obstacle <= 0) {
+            cell.obstacle = null;
+          }
+        }
+      }
+    }
+  };
+
+  /* useEffect */
   // 🔹 최고 점수 로딩/저장
   useEffect(() => {
     const savedBestScore = loadBestScore();
