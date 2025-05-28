@@ -54,7 +54,7 @@ export default function Page() {
   const [selectedUpgrade, setSelectedUpgrade] = useState(null);
 
   const [ownedSpecialWeapons, setOwnedSpecialWeapons] = useState({
-    tank: 0,
+    tank: 9,
     bomber: 0,
     nuke: 0,
   });
@@ -175,9 +175,41 @@ export default function Page() {
         tank: prev.tank - 1,
       }));
 
-      // TODO: 탱크폭탄 효과 넣을 자리
+      applyTankBlast(); // ← 여기 연결
     } else {
       console.log("❌ 탱크폭탄이 없습니다.");
+    }
+  };
+  const applyTankBlast = () => {
+    const x = Math.floor(Math.random() * (gridSize - 1));
+    const y = Math.floor(Math.random() * (gridSize - 1));
+
+    console.log(`💥 탱크블럭 사용: (${x}, ${y}) ~ (${x + 1}, ${y + 1})`);
+
+    for (let dy = 0; dy < 2; dy++) {
+      for (let dx = 0; dx < 2; dx++) {
+        const cx = x + dx;
+        const cy = y + dy;
+        const cell = grid.current[cy][cx];
+
+        // 💣 폭발 방향 지정 (탱크 전용)
+        cell.explosionDirection = "tank";
+        startExplosionEffect(cell); // 🔥 핵심: drawExplosionEffect에서 반응
+
+        // 💥 데미지 regardless of obstacle
+        if (cell.obstacle) {
+          cell.obstacle -= 50;
+          if (cell.obstacle <= 0) {
+            cell.obstacle = null;
+          }
+        }
+
+        // 💥 항상 폭발 효과 발생
+        startExplosionEffect(cell);
+        createExplosionParticles(cx, cy, cellSize, particles, {
+          intense: true,
+        });
+      }
     }
   };
 
