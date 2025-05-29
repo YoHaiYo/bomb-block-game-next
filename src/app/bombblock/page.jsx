@@ -467,21 +467,6 @@ export default function Page() {
       }
     }
   };
-
-  const handleUseTankBomb = () => {
-    if (ownedSpecialWeapons.tank > 0) {
-      console.log("💥 탱크폭탄 사용!");
-
-      setOwnedSpecialWeapons((prev) => ({
-        ...prev,
-        tank: prev.tank - 1,
-      }));
-
-      applyTankBlast(); // ← 여기 연결
-    } else {
-      console.log("❌ 탱크폭탄이 없습니다.");
-    }
-  };
   const handleUseSpecialBomb = (type) => {
     if (ownedSpecialWeapons[type] > 0) {
       console.log(`💥 ${type} 폭탄 사용!`);
