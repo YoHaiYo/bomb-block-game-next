@@ -628,7 +628,7 @@ export default function Page() {
                 src="/img/bomber.png"
                 alt="Bomber Bomb"
                 className={`w-full h-full object-contain ${
-                  ownedSpecialWeapons.tank > 0
+                  ownedSpecialWeapons.bomber > 0
                     ? "opacity-80 hover:opacity-100"
                     : "opacity-30 cursor-not-allowed"
                 }`}
