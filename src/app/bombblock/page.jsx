@@ -269,7 +269,6 @@ export default function Page() {
       return;
     }
     if (turn + 1 === 77) {
-      // transformToTankBlock();
       transformToSpecialBlock(turn);
     }
 
@@ -415,29 +414,6 @@ export default function Page() {
   };
 
   /* 특수블럭 */
-  const transformToTankBlock = () => {
-    const allObstacles = [];
-
-    for (let y = 0; y < gridSize; y++) {
-      for (let x = 0; x < gridSize; x++) {
-        const cell = grid.current[y][x];
-        if (cell.obstacle) {
-          allObstacles.push({ x, y, strength: cell.obstacle });
-        }
-      }
-    }
-    // 상위 30% 내구도 필터링
-    const sorted = allObstacles.sort((a, b) => b.strength - a.strength);
-    const count = Math.ceil(sorted.length * 0.3);
-    const topObstacles = sorted.slice(0, count);
-
-    if (topObstacles.length > 0) {
-      const picked =
-        topObstacles[Math.floor(Math.random() * topObstacles.length)];
-      const cell = grid.current[picked.y][picked.x];
-      cell.isTank = true; // 탱크 여부 마킹
-    }
-  };
   const transformToSpecialBlock = (turn) => {
     const allObstacles = [];
 
@@ -648,7 +624,7 @@ export default function Page() {
                     : "opacity-30 cursor-not-allowed"
                 }`}
               />
-              <span className="absolute bottom-0 right-0 text-xs bg-black text-white px-1 rounded">
+              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-1 rounded">
                 x {ownedSpecialWeapons.tank || 0}
               </span>
             </div>
@@ -657,10 +633,14 @@ export default function Page() {
             <div className="relative w-10 h-10 cursor-pointer">
               <img
                 src="/img/bomber.png"
-                alt="Bomber"
-                className="w-full h-full object-contain "
+                alt="Bomber Bomb"
+                className={`w-full h-full object-contain ${
+                  ownedSpecialWeapons.tank > 0
+                    ? "opacity-80 hover:opacity-100"
+                    : "opacity-30 cursor-not-allowed"
+                }`}
               />
-              <span className="absolute bottom-0 right-0 text-xs bg-black text-white px-1 rounded">
+              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-1 rounded">
                 x {ownedSpecialWeapons.bomber || 0}
               </span>
             </div>
@@ -672,7 +652,7 @@ export default function Page() {
                 alt="Nuke"
                 className="w-full h-full object-contain opacity-50"
               />
-              <span className="absolute bottom-0 right-0 text-xs bg-black text-white px-1 rounded">
+              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-1 rounded">
                 x {ownedSpecialWeapons.nuke || 0}
               </span>
             </div>
