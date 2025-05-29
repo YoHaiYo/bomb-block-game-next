@@ -57,7 +57,7 @@ export default function Page() {
   const [ownedSpecialWeapons, setOwnedSpecialWeapons] = useState({
     tank: 9,
     bomber: 9,
-    nuke: 3,
+    nuke: 9,
   });
 
   // 🔹 캔버스 크기 자동 조정
@@ -394,6 +394,14 @@ export default function Page() {
         // 🔹 폭탄 렌더링
         if (cell.bomb && cell.bomb.countdown > 0) {
           drawBomb(ctx, cell, cx, cy, cellSize.current, bombDamageRef.current);
+        }
+        // 셀 번쩍임 (핵폭탄 등)
+        if (cell.flashFrame && cell.flashFrame > 0) {
+          const opacity = cell.flashFrame % 2 === 0 ? 0.9 : 0.3;
+          ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+          ctx.fillRect(cx, cy, cellSize.current, cellSize.current);
+          cell.flashFrame--;
+          continue; // 다른 내용 렌더 생략
         }
       }
     }

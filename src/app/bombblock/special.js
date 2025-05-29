@@ -85,7 +85,14 @@ export const handleUseSpecialBomb = (
         );
         break;
       case "nuke":
-        // applyNukeBlast(...);
+        applyNukeBlast(
+          grid,
+          gridSize,
+          cellSize,
+          particles,
+          startExplosionEffect,
+          createExplosionParticles
+        );
         break;
       default:
         console.warn(`Unknown bomb type: ${type}`);
@@ -185,4 +192,57 @@ const applyBomberBlast = (
 
     index++;
   }, 150);
+};
+export const applyNukeBlast = (
+  grid,
+  gridSize,
+  cellSize,
+  particles,
+  startExplosionEffect,
+  createExplosionParticles
+) => {
+  console.log("☢️ 핵폭탄 발동!");
+
+  const centerX = Math.floor(gridSize / 2);
+  const centerY = Math.floor(gridSize / 2);
+  const radius = 3;
+  const damage = 70;
+
+  // 1. 모든 셀에 깜빡임 마킹 (drawGrid에서 처리됨)
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      grid[y][x].flashFrame = 6; // 6프레임 = 약 300ms 깜빡임
+    }
+  }
+
+  // 2. 깜빡임 후 실제 폭발
+  setTimeout(() => {
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        const dx = x - centerX;
+        const dy = y - centerY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist <= radius) {
+          const cell = grid[y][x];
+          cell.explosionDirection = "nuke";
+          startExplosionEffect(cell);
+          createExplosionParticles(x, y, cellSize, particles, {
+            intense: true,
+          });
+
+          if (cell.obstacle) {
+            cell.obstacle -= damage;
+            if (cell.obstacle <= 0) {
+              cell.obstacle = null;
+              cell.specialType = null;
+            }
+          }
+
+          if (cell.bomb) {
+            cell.bomb = null;
+          }
+        }
+      }
+    }
+  }, 300); // 300ms 후 폭발
 };
