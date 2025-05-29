@@ -449,13 +449,14 @@ export default function Page() {
         topObstacles[Math.floor(Math.random() * topObstacles.length)];
       const cell = grid.current[picked.y][picked.x];
 
-      // ✅ 타입별 확률 정의 및 처리
-      const rand = Math.random();
+      // ✅ 타입별 확률(%) 정의 및 처리 (누적합의 비율로 확률 처리)
       const chances = [
-        { type: "tank", chance: 0.6 },
-        { type: "bomber", chance: 0.2 },
-        { type: "nuke", chance: 0.1 },
+        { type: "tank", chance: 0 },
+        { type: "bomber", chance: 100 },
+        { type: "nuke", chance: 0 },
       ];
+      const total = chances.reduce((sum, entry) => sum + entry.chance, 0);
+      const rand = Math.random() * total;
       let acc = 0;
       for (const entry of chances) {
         acc += entry.chance;
