@@ -10,6 +10,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ### 테스팅용 계정
 
 test@test.com / 1111
-"# DaMoNa" 
-"# bomb-block-game-next" 
+"# DaMoNa"
+"# bomb-block-game-next"
 
+.
