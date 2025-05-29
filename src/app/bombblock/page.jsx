@@ -482,6 +482,34 @@ export default function Page() {
       console.log("❌ 탱크폭탄이 없습니다.");
     }
   };
+  const handleUseSpecialBomb = (type) => {
+    if (ownedSpecialWeapons[type] > 0) {
+      console.log(`💥 ${type} 폭탄 사용!`);
+
+      setOwnedSpecialWeapons((prev) => ({
+        ...prev,
+        [type]: prev[type] - 1,
+      }));
+
+      // 💣 폭탄 타입별 효과 분기
+      switch (type) {
+        case "tank":
+          applyTankBlast();
+          break;
+        case "bomber":
+          // applyBomberBlast(); // 아직 구현 안 됐으면 임시 로그만
+          break;
+        case "nuke":
+          // applyNukeBlast(); // 나중에 구현 예정
+          break;
+        default:
+          console.warn(`Unknown bomb type: ${type}`);
+      }
+    } else {
+      console.log(`❌ ${type} 폭탄이 없습니다.`);
+    }
+  };
+
   const applyTankBlast = () => {
     // 중심점을 기준으로 상하좌우 1칸 → 총 3x3 범위
     const centerX = Math.floor(Math.random() * gridSize);
@@ -634,8 +662,10 @@ export default function Page() {
           <div className="flex justify-around !mt-0">
             {/* 탱크폭탄 */}
             <div
+              onClick={() => {
+                handleUseSpecialBomb("tank");
+              }}
               className="relative w-10 h-10 cursor-pointer"
-              onClick={handleUseTankBomb}
             >
               <img
                 src="/img/tank.png"
@@ -652,7 +682,12 @@ export default function Page() {
             </div>
 
             {/* 폭격기 */}
-            <div className="relative w-10 h-10 cursor-pointer">
+            <div
+              onClick={() => {
+                handleUseSpecialBomb("bomber");
+              }}
+              className="relative w-10 h-10 cursor-pointer"
+            >
               <img
                 src="/img/bomber.png"
                 alt="Bomber Bomb"
@@ -668,7 +703,12 @@ export default function Page() {
             </div>
 
             {/* 핵폭탄 */}
-            <div className="relative w-10 h-10 cursor-pointer">
+            <div
+              onClick={() => {
+                handleUseSpecialBomb("nuke");
+              }}
+              className="relative w-10 h-10 cursor-pointer"
+            >
               <img
                 src="/img/nuke.png"
                 alt="Nuke Bomb"
