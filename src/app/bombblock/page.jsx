@@ -199,14 +199,23 @@ export default function Page() {
 
           const wasDestroyed = neighbor.obstacle <= 0;
           if (wasDestroyed) {
-            // 💥 탱크블럭 파괴되었을 때
-            if (neighbor.specialType === "tank") {
-              setOwnedSpecialWeapons((prev) => ({
-                ...prev,
-                tank: prev.tank + 1,
-              }));
+            const specialType = neighbor.specialType;
+
+            if (specialType) {
+              console.log("💥 특수블럭 파괴됨:", specialType);
+              console.log("🔍 파괴 전 수량:", ownedSpecialWeapons[specialType]);
+
+              setOwnedSpecialWeapons((prev) => {
+                const updated = {
+                  ...prev,
+                  [specialType]: (prev[specialType] || 0) + 1,
+                };
+                console.log("🛠️ 갱신될 상태:", updated);
+                return updated;
+              });
             }
-            neighbor.specialType = null; // 마킹 해제
+
+            neighbor.specialType = null;
             neighbor.obstacle = null;
           }
 
@@ -564,7 +573,7 @@ export default function Page() {
                     : "opacity-30 cursor-not-allowed"
                 }`}
               />
-              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-1 rounded">
+              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-0 rounded">
                 x {ownedSpecialWeapons.tank || 0}
               </span>
             </div>
@@ -595,7 +604,7 @@ export default function Page() {
                     : "opacity-30 cursor-not-allowed"
                 }`}
               />
-              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-1 rounded">
+              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-0 rounded">
                 x {ownedSpecialWeapons.bomber || 0}
               </span>
             </div>
@@ -626,7 +635,7 @@ export default function Page() {
                     : "opacity-30 cursor-not-allowed"
                 }`}
               />
-              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-1 rounded">
+              <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-0 rounded">
                 x {ownedSpecialWeapons.nuke || 0}
               </span>
             </div>
