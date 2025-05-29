@@ -55,7 +55,7 @@ export default function Page() {
 
   const [ownedSpecialWeapons, setOwnedSpecialWeapons] = useState({
     tank: 9,
-    bomber: 0,
+    bomber: 9,
     nuke: 0,
   });
 
@@ -199,14 +199,13 @@ export default function Page() {
           const wasDestroyed = neighbor.obstacle <= 0;
           if (wasDestroyed) {
             // 💥 탱크블럭 파괴되었을 때
-            if (neighbor.isTank) {
+            if (neighbor.specialType === "tank") {
               setOwnedSpecialWeapons((prev) => ({
                 ...prev,
                 tank: prev.tank + 1,
               }));
-              // 고유 ID로 추가
             }
-            neighbor.isTank = false;
+            neighbor.specialType = null; // 마킹 해제
             neighbor.obstacle = null;
           }
 
@@ -270,7 +269,8 @@ export default function Page() {
       return;
     }
     if (turn + 1 === 77) {
-      transformToTankBlock();
+      // transformToTankBlock();
+      transformToSpecialBlock(turn);
     }
 
     updateDescriptionByTurn(turn);
@@ -356,9 +356,12 @@ export default function Page() {
 
         // 🔹 장애물 렌더링
         if (cell.obstacle) {
-          const color = cell.isTank
-            ? "hsl(120, 60%, 25%)" // 탱크블럭 색상
-            : getObstacleColor(cell.obstacle);
+          const color =
+            cell.specialType === "tank"
+              ? "hsl(120, 60%, 25%)" // 탱크
+              : cell.specialType === "bomber"
+              ? "hsl(210, 60%, 25%)" // 폭격기
+              : getObstacleColor(cell.obstacle);
           drawWallBlock(
             ctx,
             cx,
@@ -366,7 +369,7 @@ export default function Page() {
             cellSize.current,
             cell.obstacle,
             color,
-            cell.isTank
+            cell.specialType // ← 여기에서 필요하면 drawWallBlock에서도 처리
           );
         }
 
@@ -435,6 +438,38 @@ export default function Page() {
       cell.isTank = true; // 탱크 여부 마킹
     }
   };
+  const transformToSpecialBlock = (turn) => {
+    const allObstacles = [];
+
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        const cell = grid.current[y][x];
+        if (cell.obstacle) {
+          allObstacles.push({ x, y, strength: cell.obstacle });
+        }
+      }
+    }
+
+    // 상위 30% 내구도 필터링
+    const sorted = allObstacles.sort((a, b) => b.strength - a.strength);
+    const count = Math.ceil(sorted.length * 0.3);
+    const topObstacles = sorted.slice(0, count);
+
+    if (topObstacles.length > 0) {
+      const picked =
+        topObstacles[Math.floor(Math.random() * topObstacles.length)];
+      const cell = grid.current[picked.y][picked.x];
+
+      // 🔄 랜덤 확률로 특수블럭 타입 결정
+      const rand = Math.random();
+      if (rand < 0.7) {
+        cell.specialType = "tank";
+      } else {
+        cell.specialType = "bomber";
+      }
+    }
+  };
+
   const handleUseTankBomb = () => {
     if (ownedSpecialWeapons.tank > 0) {
       console.log("💥 탱크폭탄 사용!");
@@ -621,9 +656,9 @@ export default function Page() {
             {/* 폭격기 */}
             <div className="relative w-10 h-10 cursor-pointer">
               <img
-                src="/img/tank.png"
+                src="/img/bomber.png"
                 alt="Bomber"
-                className="w-full h-full object-contain opacity-50"
+                className="w-full h-full object-contain "
               />
               <span className="absolute bottom-0 right-0 text-xs bg-black text-white px-1 rounded">
                 x {ownedSpecialWeapons.bomber || 0}
