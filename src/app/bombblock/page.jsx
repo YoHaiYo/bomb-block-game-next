@@ -16,6 +16,7 @@ import GameOverModal from "./component/GameOverModal";
 import RankingListModal from "./component/RankingListModal";
 import UpgradeModal from "./component/UpgradeModal";
 import { handleUseSpecialBomb, transformToSpecialBlock } from "./special";
+import NoticeModal from "./component/NoticeModal";
 
 export default function Page() {
   const router = useRouter();
@@ -53,11 +54,12 @@ export default function Page() {
   const [message, setMessage] = useState("");
   const [showRankingList, setShowRankingList] = useState(false);
   const [selectedUpgrade, setSelectedUpgrade] = useState(null);
+  const [showNoticeModal, setShowNoticeModal] = useState(false);
 
   const [ownedSpecialWeapons, setOwnedSpecialWeapons] = useState({
-    tank: 9,
-    bomber: 9,
-    nuke: 9,
+    tank: 0,
+    bomber: 0,
+    nuke: 0,
   });
 
   // 🔹 캔버스 크기 자동 조정
@@ -465,6 +467,10 @@ export default function Page() {
     setBestScore(savedBestScore);
     drawGrid();
     window.addEventListener("resize", resizeCanvas);
+    const hide = localStorage.getItem("blockgg_notice_1");
+    if (!hide) {
+      setShowNoticeModal(true);
+    }
     return () => window.removeEventListener("resize", resizeCanvas);
   }, []);
 
@@ -740,6 +746,10 @@ export default function Page() {
           onClose={() => setShowRankingList(false)}
         />
       )}
+      <NoticeModal
+        show={showNoticeModal}
+        onClose={() => setShowNoticeModal(false)}
+      />
     </section>
   );
 }
