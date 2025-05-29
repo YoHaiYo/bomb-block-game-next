@@ -9,5 +9,5 @@ export default function BodyWrapper({ children }) {
     ? "overflow-y-hiddenXXX md:overflow-y-autoXXX"
     : "";
 
-  return <body className={bodyClass}>{children}</body>;
+  return <body className={`${bodyClass} overflow-x-hidden`}>{children}</body>;
 }

@@ -212,6 +212,7 @@ export function drawBomb(ctx, cell, cx, cy, size, damage) {
 
 let tankImage = null;
 let bomberImage = null;
+let nukeImage = null;
 export function drawWallBlock(
   ctx,
   cx,
@@ -277,6 +278,14 @@ export function drawWallBlock(
       }
       if (bomberImage.complete) {
         image = bomberImage;
+      }
+    } else if (specialType === "nuke") {
+      if (!nukeImage) {
+        nukeImage = new window.Image();
+        nukeImage.src = "/img/nuke.png";
+      }
+      if (nukeImage.complete) {
+        image = nukeImage;
       }
     }
 

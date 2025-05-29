@@ -56,7 +56,7 @@ export default function Page() {
   const [ownedSpecialWeapons, setOwnedSpecialWeapons] = useState({
     tank: 9,
     bomber: 9,
-    nuke: 0,
+    nuke: 3,
   });
 
   // 🔹 캔버스 크기 자동 조정
@@ -268,7 +268,8 @@ export default function Page() {
       setShowUpgrade(true);
       return;
     }
-    if (turn + 1 === 77) {
+    if ((turn + 1 - 77) % 100 === 0) {
+      // 77턴에서 100턴마다 특수블럭 소환
       transformToSpecialBlock(turn);
     }
 
@@ -355,12 +356,20 @@ export default function Page() {
 
         // 🔹 장애물 렌더링
         if (cell.obstacle) {
-          const color =
-            cell.specialType === "tank"
-              ? "hsl(120, 60%, 25%)" // 탱크
-              : cell.specialType === "bomber"
-              ? "hsl(210, 60%, 25%)" // 폭격기
-              : getObstacleColor(cell.obstacle);
+          let color;
+          switch (cell.specialType) {
+            case "tank":
+              color = "hsl(120, 60%, 25%)"; // 초록
+              break;
+            case "bomber":
+              color = "hsl(210, 60%, 25%)"; // 네이비 블루
+              break;
+            case "nuke":
+              color = "hsl(30, 100%, 35%)"; // 주황 계열
+              break;
+            default:
+              color = getObstacleColor(cell.obstacle);
+          }
           drawWallBlock(
             ctx,
             cx,
@@ -426,9 +435,13 @@ export default function Page() {
       }
     }
 
-    // 상위 30% 내구도 필터링
+    // ✅ 필터링 비율은 턴 수에 따라 점점 좁힘
+    // 최소 5%, 최대 30%, 턴 600 이상이면 거의 최상위만
+    const minRatio = 0.05;
+    const maxRatio = 0.3;
+    const ratio = Math.max(minRatio, maxRatio - turn / 1000); // 선형 감소
     const sorted = allObstacles.sort((a, b) => b.strength - a.strength);
-    const count = Math.ceil(sorted.length * 0.3);
+    const count = Math.ceil(sorted.length * ratio);
     const topObstacles = sorted.slice(0, count);
 
     if (topObstacles.length > 0) {
@@ -436,12 +449,20 @@ export default function Page() {
         topObstacles[Math.floor(Math.random() * topObstacles.length)];
       const cell = grid.current[picked.y][picked.x];
 
-      // 🔄 랜덤 확률로 특수블럭 타입 결정
+      // ✅ 타입별 확률 정의 및 처리
       const rand = Math.random();
-      if (rand < 0.7) {
-        cell.specialType = "tank";
-      } else {
-        cell.specialType = "bomber";
+      const chances = [
+        { type: "tank", chance: 0.6 },
+        { type: "bomber", chance: 0.2 },
+        { type: "nuke", chance: 0.1 },
+      ];
+      let acc = 0;
+      for (const entry of chances) {
+        acc += entry.chance;
+        if (rand < acc) {
+          cell.specialType = entry.type;
+          break;
+        }
       }
     }
   };
@@ -580,7 +601,7 @@ export default function Page() {
       </h2>
       {/* 점수판  */}
       <div className="mb-2">
-        <div className="bg-black text-white font-mono tracking-widest px-6 py-3  border border-green-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
+        <div className="bg-black text-white font-mono tracking-widest px-2 md:px-6 py-3  border border-green-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
           <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
             <span>
               TURN:
@@ -648,9 +669,13 @@ export default function Page() {
             {/* 핵폭탄 */}
             <div className="relative w-10 h-10 cursor-pointer">
               <img
-                src="/img/tank.png"
-                alt="Nuke"
-                className="w-full h-full object-contain opacity-50"
+                src="/img/nuke.png"
+                alt="Nuke Bomb"
+                className={`w-full h-full object-contain ${
+                  ownedSpecialWeapons.nuke > 0
+                    ? "opacity-80 hover:opacity-100"
+                    : "opacity-30 cursor-not-allowed"
+                }`}
               />
               <span className="absolute -bottom-2 right-0 text-xs bg-blackxxx text-white px-1 rounded">
                 x {ownedSpecialWeapons.nuke || 0}
