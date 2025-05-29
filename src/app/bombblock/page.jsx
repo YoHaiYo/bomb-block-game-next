@@ -30,7 +30,7 @@ export default function Page() {
   const gameOver = useRef(false);
   const rankingCutPoint = 2000; // 랭킹 점수컷
 
-  const [turn, setTurn] = useState(75);
+  const [turn, setTurn] = useState(0); // 기본 0
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -119,6 +119,18 @@ export default function Page() {
   };
   // 벽 내구도
   const getObstacleStrength = (turn) => {
+    if (turn < 50) return 1;
+    if (turn < 150) return 3;
+    if (turn < 300) return 4;
+    if (turn < 450) return 5;
+    if (turn < 600) return 7;
+
+    // 600턴 이후: 더 빠르게 지수적으로 증가
+    const extraTurns = turn - 600;
+    const strength = 9 + Math.floor(Math.pow(extraTurns / 80, 1.5)); // 빠른 지수 증가
+    return Math.min(strength, 99);
+  };
+  const getObstacleStrength_before_250529 = (turn) => {
     if (turn < 50) return 1;
     if (turn < 150) return 2;
     if (turn < 300) return 3;
