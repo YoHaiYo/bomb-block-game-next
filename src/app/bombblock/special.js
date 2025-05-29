@@ -75,7 +75,14 @@ export const handleUseSpecialBomb = (
         );
         break;
       case "bomber":
-        // applyBomberBlast(...);
+        applyBomberBlast(
+          grid,
+          gridSize,
+          cellSize,
+          particles,
+          startExplosionEffect,
+          createExplosionParticles
+        );
         break;
       case "nuke":
         // applyNukeBlast(...);
@@ -88,7 +95,7 @@ export const handleUseSpecialBomb = (
   }
 };
 
-export const applyTankBlast = (
+const applyTankBlast = (
   grid,
   gridSize,
   cellSize,
@@ -121,4 +128,61 @@ export const applyTankBlast = (
       }
     }
   }
+};
+
+const applyBomberBlast = (
+  grid,
+  gridSize,
+  cellSize,
+  particles,
+  startExplosionEffect,
+  createExplosionParticles
+) => {
+  console.log("💣 폭격기 출격!");
+
+  const direction = Math.random() < 0.5 ? "↘" : "↗";
+  const path = [];
+
+  for (let i = 0; i < gridSize; i++) {
+    const x = i;
+    const y = direction === "↘" ? i : gridSize - 1 - i;
+    path.push({ x, y });
+  }
+
+  let index = 0;
+  const damage = 30;
+  const interval = setInterval(() => {
+    if (index >= path.length) {
+      clearInterval(interval);
+      return;
+    }
+
+    const { x, y } = path[index];
+    console.log(`🚁 폭격기 위치: (${x}, ${y})`);
+
+    const dropCount = Math.floor(Math.random() * 2) + 1;
+    for (let i = 0; i < dropCount; i++) {
+      const dx = Math.floor(Math.random() * 3) - 1;
+      const dy = Math.floor(Math.random() * 3) - 1;
+      const cx = x + dx;
+      const cy = y + dy;
+
+      if (cx < 0 || cy < 0 || cx >= gridSize || cy >= gridSize) continue;
+
+      const cell = grid[cy][cx];
+      cell.explosionDirection = "bomber";
+      startExplosionEffect(cell);
+      createExplosionParticles(cx, cy, cellSize, particles, { intense: false });
+
+      if (cell.obstacle) {
+        cell.obstacle -= damage;
+        if (cell.obstacle <= 0) {
+          cell.obstacle = null;
+          cell.specialType = null;
+        }
+      }
+    }
+
+    index++;
+  }, 150);
 };
