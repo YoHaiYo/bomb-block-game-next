@@ -294,6 +294,9 @@ export default function Page() {
     3: "💣Bombs explode after 3 turns!",
     5: "🧱Wall Block full=Game Over. Good luck!🍀",
     26: `Upgrade cards appear every ${upgradeTurn} turns. Choose wisely to survive!`,
+    77: `💥 A Special Bomb Block has appeared! Destroy it to collect powerful bombs!`,
+    87: `Special Bomb Blocks appear on turns ending in 77.`,
+    90: `🧱Wall Block full=Game Over. Good luck!🍀`,
   };
   const updateDescriptionByTurn = (currentTurn) => {
     const realTurn = currentTurn + 1;
