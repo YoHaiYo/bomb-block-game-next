@@ -26,9 +26,9 @@ export const transformToSpecialBlock = (grid, gridSize, turn) => {
 
     // ✅ 타입별 확률(%) 정의 및 처리 (누적합의 비율로 확률 처리)
     const chances = [
-      { type: "tank", chance: 0 },
-      { type: "bomber", chance: 100 },
-      { type: "nuke", chance: 0 },
+      { type: "tank", chance: 60 },
+      { type: "bomber", chance: 30 },
+      { type: "nuke", chance: 10 },
     ];
 
     const total = chances.reduce((sum, entry) => sum + entry.chance, 0);
@@ -157,7 +157,7 @@ const applyBomberBlast = (
   }
 
   let index = 0;
-  const damage = 30;
+  const damage = 50;
   const interval = setInterval(() => {
     if (index >= path.length) {
       clearInterval(interval);
@@ -193,7 +193,7 @@ const applyBomberBlast = (
     index++;
   }, 150);
 };
-export const applyNukeBlast = (
+const applyNukeBlast = (
   grid,
   gridSize,
   cellSize,
