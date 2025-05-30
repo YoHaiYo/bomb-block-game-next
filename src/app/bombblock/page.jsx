@@ -499,7 +499,7 @@ export default function Page() {
   return (
     <section className="min-h-screen flex flex-col items-center justify-start bg-gray-900 py-2">
       {/* 헤더/로고 영역 */}
-      <div className="w-full flex justify-start mb-1 px-3">
+      <div className="xl:fixed w-full flex justify-start mb-1 px-3">
         <div className="flex items-center gap-2">
           <Image
             onClick={() => router.push("/")}
@@ -546,7 +546,7 @@ export default function Page() {
       </h2>
       {/* 점수판  */}
       <div className="mb-2">
-        <div className="bg-black text-white font-mono tracking-widest px-2 md:px-6 py-3  border border-green-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
+        <div className="bg-black text-white font-mono tracking-widest px-2 md:px-6 py-3 md:py-2  border border-green-500 shadow-lg ring-2 ring-lime-400 ring-opacity-50 text-center space-y-2">
           <div className="flex justify-center gap-8 text-lgxxx text-xs sm:text-base">
             <span>
               TURN:
@@ -678,9 +678,9 @@ export default function Page() {
         className="bg-gray-800"
         onClick={handleCanvasClick}
       />
-      {/* 해설 UI창 */}
+      {/* 해설창 */}
       <div
-        className={`mt-4 text-white text-sm sm:text-base px-6 py-3  font-mono w-full max-w-xl text-center shadow transition-all duration-300 ${
+        className={`mt-4 md:mt-2 text-white text-sm sm:text-base px-6 py-3  font-mono w-full max-w-xl text-center shadow transition-all duration-300 ${
           isDescriptionChanging ? "opacity-0 scale-95" : "opacity-100 scale-100"
         } ${
           isDanger ? "border-red-500" : "border-lime-400"
