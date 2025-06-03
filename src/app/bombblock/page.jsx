@@ -292,8 +292,8 @@ export default function Page() {
       setShowUpgrade(true);
       return;
     }
-    if ((turn + 1 - 77) % 100 === 0) {
-      // 77턴에서 100턴마다 특수블럭 소환
+    if ((turn + 1) % 100 === 77 || (turn + 1) % 33 === 0) {
+      // 33, 77턴에서 100턴마다 특수블럭 소환
       transformToSpecialBlock(grid.current, gridSize, turn);
     }
 
@@ -308,9 +308,9 @@ export default function Page() {
     3: "💣Bombs explode after 3 turns!",
     5: "🧱Wall Block full=Game Over. Good luck!🍀",
     26: `Upgrade cards appear every ${upgradeTurn} turns. Choose wisely to survive!`,
-    77: `💥 A Special Bomb Block has appeared! Destroy it to collect powerful bombs!`,
-    87: `Special Bomb Blocks appear on turns ending in 77.`,
-    90: `🧱Wall Block full=Game Over. Good luck!🍀`,
+    33: `💥 A Special Bomb Block has appeared! Destroy it to collect powerful bombs!`,
+    40: `Special Bomb Blocks appear on turns ending in 33, 77.`,
+    50: `🧱Wall Block full=Game Over. Good luck!🍀`,
   };
   const updateDescriptionByTurn = (currentTurn) => {
     const realTurn = currentTurn + 1;

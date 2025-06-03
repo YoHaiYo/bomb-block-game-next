@@ -167,15 +167,16 @@ const applyBomberBlast = (
     const { x, y } = path[index];
     console.log(`🚁 폭격기 위치: (${x}, ${y})`);
 
-    const dropCount = Math.floor(Math.random() * 2) + 1;
+    const dropCount = 3; // 해당 좌표에서 폭탄 몇개 떨굴지 정함함
     for (let i = 0; i < dropCount; i++) {
+      // 폭탄 낙하 좌표계산 - 대각으로 이동하는 3x3 좌표
       const dx = Math.floor(Math.random() * 3) - 1;
       const dy = Math.floor(Math.random() * 3) - 1;
       const cx = x + dx;
       const cy = y + dy;
-
+      // 그리드 범위밖 무시
       if (cx < 0 || cy < 0 || cx >= gridSize || cy >= gridSize) continue;
-
+      // 폭발효과 시작
       const cell = grid[cy][cx];
       cell.explosionDirection = "bomber";
       startExplosionEffect(cell);
