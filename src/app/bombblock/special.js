@@ -130,6 +130,7 @@ const applyTankBlast = (
   // 중심점을 기준으로 상하좌우 1칸 → 총 3x3 범위
   const centerX = Math.floor(Math.random() * gridSize);
   const centerY = Math.floor(Math.random() * gridSize);
+  const damage = 50;
 
   console.log(`💥 탱크블럭 사용: 중심 (${centerX}, ${centerY})`);
 
@@ -145,7 +146,7 @@ const applyTankBlast = (
       createExplosionParticles(cx, cy, cellSize, particles, { intense: true });
 
       if (cell.obstacle) {
-        cell.obstacle -= 50;
+        cell.obstacle -= damage;
         if (cell.obstacle <= 0) {
           // cell.obstacle = null;
           handleObstacleDestruction(cell, setOwnedSpecialWeapons);
@@ -225,8 +226,9 @@ const applyNukeBlast = (
 ) => {
   console.log("☢️ 핵폭탄 발동!");
 
-  const centerX = Math.floor(gridSize / 2);
-  const centerY = Math.floor(gridSize / 2);
+  const centerX = Math.floor(Math.random() * gridSize);
+  const centerY = Math.floor(Math.random() * gridSize);
+
   const radius = 3;
   const damage = 70;
 

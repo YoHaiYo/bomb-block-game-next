@@ -23,7 +23,30 @@ const explosionStyles = {
     particleLife: 30,
     flashColor: "rgba(255,255,255,0.5)",
   },
-  // 🚧 이후 bomber, nuke 등 추가 예정
+  bomber: {
+    radiusScale: 0.75,
+    gradientStops: [
+      ["#ffffe0", 0],
+      ["#ffdd55", 0.2],
+      ["#ff8800", 0.5],
+      ["#444444", 1],
+    ],
+    particleCount: 18,
+    particleLife: 25,
+    flashColor: "rgba(255, 255, 100, 0.4)",
+  },
+  nuke: {
+    radiusScale: 1.2,
+    gradientStops: [
+      ["#ffffff", 0],
+      ["#ffff99", 0.3],
+      ["#ff3333", 0.6],
+      ["#000000", 1],
+    ],
+    particleCount: 36,
+    particleLife: 40,
+    flashColor: "rgba(255,255,255,0.8)",
+  },
 };
 
 export function drawExplosionEffect(ctx, cell, cx, cy, cellSize, particles) {

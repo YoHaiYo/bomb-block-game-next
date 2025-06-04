@@ -292,7 +292,8 @@ export default function Page() {
       setShowUpgrade(true);
       return;
     }
-    if ((turn + 1) % 100 === 77 || (turn + 1) % 33 === 0) {
+
+    if ((turn + 1) % 100 === 77 || (turn + 1) % 100 === 33) {
       // 33, 77턴에서 100턴마다 특수블럭 소환
       transformToSpecialBlock(grid.current, gridSize, turn);
     }
