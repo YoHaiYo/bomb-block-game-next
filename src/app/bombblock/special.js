@@ -71,7 +71,8 @@ export const handleUseSpecialBomb = (
           cellSize,
           particles,
           startExplosionEffect,
-          createExplosionParticles
+          createExplosionParticles,
+          setOwnedSpecialWeapons
         );
         break;
       case "bomber":
@@ -81,7 +82,8 @@ export const handleUseSpecialBomb = (
           cellSize,
           particles,
           startExplosionEffect,
-          createExplosionParticles
+          createExplosionParticles,
+          setOwnedSpecialWeapons
         );
         break;
       case "nuke":
@@ -91,7 +93,8 @@ export const handleUseSpecialBomb = (
           cellSize,
           particles,
           startExplosionEffect,
-          createExplosionParticles
+          createExplosionParticles,
+          setOwnedSpecialWeapons
         );
         break;
       default:
@@ -102,13 +105,27 @@ export const handleUseSpecialBomb = (
   }
 };
 
+// 특수폭탄으로 특수폭탄 제거시 카운트
+const handleObstacleDestruction = (cell, setOwnedSpecialWeapons) => {
+  const specialType = cell.specialType;
+  if (specialType) {
+    setOwnedSpecialWeapons((prev) => ({
+      ...prev,
+      [specialType]: (prev[specialType] || 0) + 1,
+    }));
+  }
+  cell.specialType = null;
+  cell.obstacle = null;
+};
+
 const applyTankBlast = (
   grid,
   gridSize,
   cellSize,
   particles,
   startExplosionEffect,
-  createExplosionParticles
+  createExplosionParticles,
+  setOwnedSpecialWeapons
 ) => {
   // 중심점을 기준으로 상하좌우 1칸 → 총 3x3 범위
   const centerX = Math.floor(Math.random() * gridSize);
@@ -130,7 +147,8 @@ const applyTankBlast = (
       if (cell.obstacle) {
         cell.obstacle -= 50;
         if (cell.obstacle <= 0) {
-          cell.obstacle = null;
+          // cell.obstacle = null;
+          handleObstacleDestruction(cell, setOwnedSpecialWeapons);
         }
       }
     }
@@ -143,7 +161,8 @@ const applyBomberBlast = (
   cellSize,
   particles,
   startExplosionEffect,
-  createExplosionParticles
+  createExplosionParticles,
+  setOwnedSpecialWeapons
 ) => {
   console.log("💣 폭격기 출격!");
 
@@ -185,8 +204,9 @@ const applyBomberBlast = (
       if (cell.obstacle) {
         cell.obstacle -= damage;
         if (cell.obstacle <= 0) {
-          cell.obstacle = null;
-          cell.specialType = null;
+          // cell.obstacle = null;
+          // cell.specialType = null;
+          handleObstacleDestruction(cell, setOwnedSpecialWeapons);
         }
       }
     }
@@ -200,7 +220,8 @@ const applyNukeBlast = (
   cellSize,
   particles,
   startExplosionEffect,
-  createExplosionParticles
+  createExplosionParticles,
+  setOwnedSpecialWeapons
 ) => {
   console.log("☢️ 핵폭탄 발동!");
 
@@ -234,8 +255,9 @@ const applyNukeBlast = (
           if (cell.obstacle) {
             cell.obstacle -= damage;
             if (cell.obstacle <= 0) {
-              cell.obstacle = null;
-              cell.specialType = null;
+              // cell.obstacle = null;
+              // cell.specialType = null;
+              handleObstacleDestruction(cell, setOwnedSpecialWeapons);
             }
           }
 
